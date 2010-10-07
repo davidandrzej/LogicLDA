@@ -67,15 +67,6 @@ Dataset construction
         getvocab
         makecorpus
 
-Parameter files
--MakeParams.py
-
-z-label initialization
--./scripts/fastZLabel.py 
-
-Standard LDA
--./scripts/fastStandard.py
-
 Run LogicLDA
 -LogicLDA.java
         basefn 
