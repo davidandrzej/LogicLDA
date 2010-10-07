@@ -1,5 +1,9 @@
 LogicLDA - Topic modeling with First-Order Logic (FOL) domain knowledge
 
+David Andrzejewski (andrzeje@cs.wisc.edu)
+Department of Computer Sciences
+University of Wisconsin-Madison, USA
+
 This code implements inference for the LogicLDA model.  LogicLDA
 extends Latent Dirichlet Allocation (LDA) by allowing the user to
 specify a weighted first-order logic (FOL) knowledge base (KB), as in
@@ -9,6 +13,7 @@ components.  The inferred topics will then be influenced by both
 document-word corpus statistics as well as the user-specified logical
 KB. This code performs MAP inference via a stochastic gradient descent
 scheme.
+
 
 CURRENT ISSUES 
 -sentence *exclusion* runs are much slower - why?
@@ -29,6 +34,13 @@ MISSING FILES (you must supply these)
  opennlp-tools-1.4.3.jar
  trove.jar
  ujmp-complete-0.2.4.jar
+
+
+LICENSE
+
+This software is open-source, released under the terms of the GNU
+General Public License version 3, or any later version of the GPL (see
+COPYING).
 
 
 DATASET DIRECTORY FILES
