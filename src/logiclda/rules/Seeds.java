@@ -14,7 +14,7 @@ public class Seeds
 	 */
 	public Seeds(String seedString)
 	{
-		seedHits= new HashMap<Integer, ArrayList<NMinusOneGram>>();
+		seedHits = new HashMap<Integer, ArrayList<NMinusOneGram>>();
 				
 		// Each comma-separated entry is a seed n-gram
 		//
