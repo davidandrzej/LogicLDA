@@ -1,0 +1,4 @@
+Required additional files
+ EnglishSD.bin.gz (OpenNLP sentence detection model)
+ EnglishTok.bin.gz (OpenNLP tokenization model)
+ english.stop (plaintext list of stopwords)
