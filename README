@@ -1,0 +1,86 @@
+LogicLDA - Topic modeling with First-Order Logic (FOL) domain knowledge
+
+This code implements inference for the LogicLDA model.  LogicLDA
+extends Latent Dirichlet Allocation (LDA) by allowing the user to
+specify a weighted first-order logic (FOL) knowledge base (KB), as in
+Markov Logic Networks (MLN).  The resulting model can be interpreted
+as a Produce of Experts (PoE) consisting of standard LDA and MLN
+components.  The inferred topics will then be influenced by both
+document-word corpus statistics as well as the user-specified logical
+KB. This code performs MAP inference via a stochastic gradient descent
+scheme.
+
+CURRENT ISSUES 
+-sentence *exclusion* runs are much slower - why?
+
+
+MISSING FILES (you must supply these)
+
+./models/ 
+ EnglishSD.bin.gz (OpenNLP model)
+ EnglishTok.bin.gz (OpenNLP model)
+ english.stop (stopwords)
+
+./lib/ 
+ ant.jar
+ jakarta-ant-optional.jar
+ jwnl-1.3.3.jar
+ maxent-2.5.2.jar
+ opennlp-tools-1.4.3.jar
+ trove.jar
+ ujmp-complete-0.2.4.jar
+
+
+DATASET DIRECTORY FILES
+
+By convention, each dataset is assumed to contain these files
+(with the same name as the dataset, eg ./nyt/nyt.init)
+
+Input
+        .init
+
+        .alpha
+        .beta
+
+        .doclist
+        .docs
+        .vocab
+        .words
+        .sent
+
+        .rules
+
+Output
+        .sample 
+        .phi 
+        .theta
+        .topics
+        .logic
+
+
+EXPERIMENTAL PROCEDURES
+
+Dataset construction
+-TextReader.java
+        docfilter
+        wordcount
+        getvocab
+        makecorpus
+
+Parameter files
+-MakeParams.py
+
+z-label initialization
+-./scripts/fastZLabel.py 
+
+Standard LDA
+-./scripts/fastStandard.py
+
+Run LogicLDA
+-LogicLDA.java
+        basefn 
+        numsamp
+        numouter
+        numinner
+        topN
+        randseed       
