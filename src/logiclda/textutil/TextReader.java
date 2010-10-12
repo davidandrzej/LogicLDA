@@ -396,6 +396,7 @@ public class TextReader {
 	public static HashMap<String, Integer> getCounts(String dirName,
 			List<String> documents, Tokenizer tkizer) throws IOException
 	{
+		long before = System.currentTimeMillis();
 		HashMap<String,Integer> counts = new HashMap<String,Integer>();
 		File docDirectory = new File(dirName);
 		int ctr = 0;
@@ -421,6 +422,8 @@ public class TextReader {
 			}			
 			in.close();
 		}	
+		long after = System.currentTimeMillis();
+		System.out.println(String.format("Elapsed time = %d", after-before));
 		return counts;
 	}
 
