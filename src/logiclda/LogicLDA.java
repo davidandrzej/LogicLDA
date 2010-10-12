@@ -22,7 +22,7 @@ package logiclda;
 import java.util.*;
 import java.io.*;
 
-import logiclda.infer.CollapsedGibbs;
+import logiclda.StandardLDA;
 import logiclda.infer.DiscreteSample;
 import logiclda.infer.RelaxedSample;
 import logiclda.infer.MirrorDescent;
@@ -33,8 +33,6 @@ import logiclda.rules.SeedRule;
 import logiclda.rules.SentExclRule;
 import logiclda.rules.SentInclRule;
 
-import org.ujmp.core.Matrix;
-import org.ujmp.core.enums.FileFormat;
 import org.ujmp.core.exceptions.MatrixException;
 
 public class LogicLDA {
@@ -77,7 +75,7 @@ public class LogicLDA {
 			s = new DiscreteSample(c.N, p.T, c.W, c.D, init.getCanonicalPath(), c);
 		else
 			// run standard LDA for numsamp 
-			s = runStandardLDA(c, p, numsamp);
+			s = StandardLDA.runStandardLDA(c, p, numsamp);
  		
 		// Run LogicLDA MAP inference
  		//
@@ -89,21 +87,6 @@ public class LogicLDA {
 		relax.writeSample(basefn);
 		rs.satReport(relax.getZ(), basefn);
 		c.writeTopics(basefn, relax.getPhi(p), topN);
-	}
-	
-	/**
-	 * Standard (no logic) LDA, using collapsed Gibbs sampling
-	 * 
-	 * @param c
-	 * @param p
-	 * @param numsamp
-	 * @return
-	 */
-	public static DiscreteSample runStandardLDA(Corpus c, LDAParameters p, int numsamp)
-	{	
-		// Do Collapsed Gibbs sampling and return final sample
-		DiscreteSample s = CollapsedGibbs.doGibbs(c, p, numsamp);		
-		return s;
 	}
 	
 	/**
