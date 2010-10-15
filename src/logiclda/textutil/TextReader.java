@@ -2,6 +2,7 @@ package logiclda.textutil;
 import java.io.*;
 import java.util.*;
 
+import logiclda.textutil.FileUtil;
 import opennlp.tools.lang.english.*;
 
 public class TextReader {
@@ -16,44 +17,48 @@ public class TextReader {
 		if(operation.equals("docfilter"))
 		{
 			// Find documents containing *all* of our filter words
-			String directoryName = args[1];
+			String docFilesName = args[1];
 			String filterName = args[2];
 			String outputName = args[3];
-			documentFilter(directoryName, filterName, outputName);
+			documentFilter(docFilesName, filterName, outputName);
 		}
 		else if(operation.equals("wordcount"))
 		{
-			// At each threshold, how big would our vocab be?
-			String directoryName = args[1];
-			String docFilesName = args[2];
-			String stopWordFileName = args[3];			
-			String outputName = args[4];
-			countWords(directoryName, docFilesName, stopWordFileName,
-					outputName);
+			// At each threshold, how big would our vocab be?			
+			String docFilesName = args[1];
+			String stopWordFileName = args[2];			
+			String outputName = args[3];
+			countWords(docFilesName, stopWordFileName, outputName);
 		}		
 		else if(operation.equals("getvocab"))
 		{
 			// Build vocabulary 
-			String directoryName = args[1];
-			String docFilesName = args[2];
-			String stopWordFileName = args[3];
-			int threshold = Integer.parseInt(args[4]);
-			String outputName = args[5];
-			getVocab(directoryName, docFilesName, stopWordFileName, threshold,
-					outputName);
+			String docFilesName = args[1];
+			String stopWordFileName = args[2];
+			int threshold = Integer.parseInt(args[3]);
+			String outputName = args[4];
+			getVocab(docFilesName, stopWordFileName, threshold, outputName);
 		}
 		else if(operation.equals("makecorpus"))
 		{
 			// Construct actual corpus
-			String directoryName = args[1];
-			String docFilesName = args[2];
-			String vocabName = args[3];
-			String outname = args[4];
-			buildCorpus(directoryName, docFilesName, vocabName, outname);
+			String docFilesName = args[1];
+			String vocabName = args[2];
+			String outputName = args[3];
+			buildCorpus(docFilesName, vocabName, outputName);
 		}
 	}
 
-	public static void buildCorpus(String directoryName, String docFilesName,
+	/**
+	 * Build corpus files (*.words, *.docs, *.sent) 
+	 * from *.doclist and *.vocab
+	 * 
+	 * @param docFilesName
+	 * @param vocabName
+	 * @param outname
+	 * @throws IOException
+	 */
+	public static void buildCorpus(String docFilesName, 
 			String vocabName, String outname) throws IOException
 	{
 		// Init OpenNLP tokenizer and sentence detector
@@ -65,7 +70,7 @@ public class TextReader {
 				
 		// Load vocabulary
 		//
-		List<String> vocabWords = readLines(vocabName);
+		List<String> vocabWords = FileUtil.readLines(vocabName);
 		ListIterator<String> vocIter = vocabWords.listIterator();
 		HashMap<String, Integer> vocab = new HashMap<String, Integer>();
 		while(vocIter.hasNext())
@@ -85,7 +90,7 @@ public class TextReader {
 		
 		// Read through actual files
 		//
-		List<String> documents = getDocs(directoryName, docFilesName);
+		List<String> documents = getDocs(docFilesName);
 		
 		int i = 0;
 		int di = 0;
@@ -143,23 +148,28 @@ public class TextReader {
 		sentOut.close();
 	}
 	
-	public static ArrayList<String> getDocs(String directoryName, String docFilesName)
+	/**
+	 * Read document filenames from *.doclist file (one per line)
+	 * @param docFilesName
+	 * @return
+	 * @throws IOException
+	 */
+	public static ArrayList<String> getDocs(String docFilesName)
 		throws IOException
 	{
-		ArrayList<String> documents = new ArrayList<String>(); 
-		if(docFilesName.equals(directoryName))
-		{
-			File dir = new File(directoryName);
-			for(File f : dir.listFiles())
-				documents.add(f.getCanonicalPath());				
-		}	
-		else
-		{
-			documents.addAll(readLines(docFilesName));
-		}
+		ArrayList<String> documents = new ArrayList<String>(); 		
+		documents.addAll(FileUtil.readLines(docFilesName));		
 		return documents; 
 	}
 	
+	/**
+	 * Filter vocabulary using *.stop stopword file (one per line)
+	 * 
+	 * @param counts
+	 * @param stopWordFileName
+	 * @return
+	 * @throws IOException
+	 */
 	public static HashMap<String, Integer> stopFilter(HashMap<String, Integer> counts,
 			String stopWordFileName) throws IOException 
 	{
@@ -169,8 +179,18 @@ public class TextReader {
 		return counts;
 	}		
 	
-	public static void getVocab(String directoryName, String docFilesName, 
-			String stopWordFileName, int threshold, String outname) throws IOException
+	/**
+	 * Given *.doclist, *.stop, and min occur threshold, construct 
+	 * vocabulary *.vocab file (down-case and punc-filtered)
+	 *  
+	 * @param docFilesName
+	 * @param stopWordFileName
+	 * @param threshold
+	 * @param outname
+	 * @throws IOException
+	 */
+	public static void getVocab(String docFilesName, String stopWordFileName, 
+			int threshold, String outname) throws IOException
 	{
 		// Init OpenNLP tokenizer
 		//
@@ -179,11 +199,10 @@ public class TextReader {
 		
 		// Which documents are we processing?
 		//
-		ArrayList<String> documents = getDocs(directoryName, docFilesName);
+		ArrayList<String> documents = getDocs(docFilesName);
 		
 		// Get word occurrence counts
-		HashMap<String,Integer> counts = 
-			getCounts(directoryName, documents, tkizer); 
+		HashMap<String,Integer> counts = getCounts(documents, tkizer); 
 
 		// Apply stop word filter
 		counts = stopFilter(counts, stopWordFileName);
@@ -196,18 +215,16 @@ public class TextReader {
 		//
 		counts = threshFilter(counts, threshold);
 		
-		writeLines(counts.keySet(), outname);		
+		FileUtil.writeLines(counts.keySet(), outname);		
 	}
 
-	public static void writeLines(Collection<String> values, String outname)
-		throws IOException
-	{
-		FileWriter out = new FileWriter(new File(outname));
-		for(String val : values)
-			out.write(String.format("%s\n", val));
-	}
-	
-	
+	/**
+	 * Filter vocabulary by min occurrence threshold
+	 * 
+	 * @param counts
+	 * @param threshold
+	 * @return
+	 */
 	public static HashMap<String, Integer> threshFilter(HashMap<String, Integer> counts,
 			int threshold)
 	{
@@ -221,8 +238,17 @@ public class TextReader {
 		return counts;		
 	}
 	
-	public static void countWords(String directoryName, String docFilesName, 
-			String stopWordFileName, String outname) throws IOException
+	/**
+	 * Generate corpus-wide word counts 
+	 * (useful for setting vocab threshold)
+	 * 
+	 * @param docFilesName
+	 * @param stopWordFileName
+	 * @param outname
+	 * @throws IOException
+	 */
+	public static void countWords(String docFilesName, String stopWordFileName, 
+			String outname) throws IOException
 	{
 		// Init OpenNLP tokenizer
 		//
@@ -231,12 +257,11 @@ public class TextReader {
 		
 		// Which documents are we processing?
 		//
-		ArrayList<String> documents = getDocs(directoryName, docFilesName);
+		ArrayList<String> documents = getDocs(docFilesName);
 		
 		// First pass - get word occurrence counts
 		//
-		HashMap<String,Integer> counts = 
-			getCounts(directoryName, documents, tkizer); 
+		HashMap<String,Integer> counts = getCounts(documents, tkizer); 
 
 		// Apply stop word filter
 		//
@@ -276,23 +301,35 @@ public class TextReader {
 		out.close();
 	}
 
-	public static void documentFilter(String dirName, String keywordName, 
+	/**
+	 * Given some keywords, find documents which contain ALL keywords
+	 * (useful for shrinking down huge corpus)
+	 * 
+	 * @param docFilesName
+	 * @param keywordFileName
+	 * @param outname
+	 * @throws IOException
+	 */
+	public static void documentFilter(String docFilesName, String keywordFileName, 
 			String outname) throws IOException
 	{
 		// Write out filenames of all documents in this directory
 		// which contain *all* keywords
 		//
-		HashSet<String> keywords = new HashSet<String>(readLines(keywordName));
+		HashSet<String> keywords = 
+			new HashSet<String>(FileUtil.readLines(keywordFileName));
 		ArrayList<String> docHits = new ArrayList<String>();
 		
 		Tokenizer tkizer = 
 			new Tokenizer("./models/EnglishTok.bin.gz");
-		File docDirectory = new File(dirName);
 		
-		File[] allFiles = docDirectory.listFiles();
+		// Which documents are we processing?
+		//
+		ArrayList<String> documents = getDocs(docFilesName);
+				
 		int ctr = 0;
-		int N = allFiles.length;
-		for(File txtFile : allFiles)
+		int N = documents.size();
+		for(String txtFile : documents)
 		{
 			System.out.println(String.format("Doc %d of %d", ctr, N));
 			ctr += 1;
@@ -312,7 +349,7 @@ public class TextReader {
 			// Now decide whether or not to add document
 			//
 			if(docToks.containsAll(keywords))
-				docHits.add(txtFile.getCanonicalPath());				
+				docHits.add(txtFile);				
 		}	
 
 		FileWriter out = new FileWriter(new File(outname));
@@ -323,6 +360,12 @@ public class TextReader {
 		out.close();
 	}
 	
+	/**
+	 * Filter out terms which consist entirely of punctuation
+	 * 
+	 * @param counts
+	 * @return
+	 */
 	public static HashMap<String, Integer> puncFilter(HashMap<String, Integer> counts)
 	{
 		Iterator<String> keyiter = (counts.keySet()).iterator();
@@ -344,20 +387,12 @@ public class TextReader {
 		return counts;
 	}
 	
-	public static List<String> readLines(String filename) throws IOException
-	{
-		ArrayList<String> allLines = new ArrayList<String>();
-		BufferedReader in = new BufferedReader(new FileReader(filename));
-		String line = in.readLine();
-		while(line != null)
-		{	
-			allLines.add(line);
-			line = in.readLine();
-		}			
-		in.close();
-		return allLines;
-	}
-	
+	/**
+	 * Sort words by frequency
+	 * @param counts
+	 * @param sortDirection
+	 * @return
+	 */
 	public static String[] freqSortWords(HashMap<String, Integer> counts, 
 			int sortDirection)
 	{
@@ -370,19 +405,18 @@ public class TextReader {
 		return sortedWords;
 	}
 	
+	/**
+	 * Read and downcase stopwords
+	 * @param filename
+	 * @return
+	 * @throws IOException
+	 */
 	public static HashSet<String> readStopWords(String filename)
-		throws IOException
 	{
+		List<String> origStop = FileUtil.readLines(filename);
 		HashSet<String> stop = new HashSet<String>();
-		
-		BufferedReader in = new BufferedReader(new FileReader(filename));
-		String line = in.readLine();
-		while(line != null)
-		{	
-			stop.add(line.trim().toLowerCase());			
-			line = in.readLine();
-		}			
-		in.close();
+		for(String word : origStop)
+			stop.add(word.toLowerCase());
 		return stop;
 	}
 	
@@ -393,12 +427,10 @@ public class TextReader {
 	 * @return
 	 * @throws IOException
 	 */	
-	public static HashMap<String, Integer> getCounts(String dirName,
-			List<String> documents, Tokenizer tkizer) throws IOException
+	public static HashMap<String, Integer> getCounts(List<String> documents, 
+			Tokenizer tkizer) throws IOException
 	{
-		long before = System.currentTimeMillis();
-		HashMap<String,Integer> counts = new HashMap<String,Integer>();
-		File docDirectory = new File(dirName);
+		HashMap<String,Integer> counts = new HashMap<String,Integer>();		
 		int ctr = 0;
 		int N = documents.size();
 		for(String txtFile : documents)
@@ -422,8 +454,7 @@ public class TextReader {
 			}			
 			in.close();
 		}	
-		long after = System.currentTimeMillis();
-		System.out.println(String.format("Elapsed time = %d", after-before));
+		
 		return counts;
 	}
 

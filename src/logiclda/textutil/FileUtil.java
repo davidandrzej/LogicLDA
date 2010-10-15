@@ -16,21 +16,20 @@ import org.ujmp.core.exceptions.MatrixException;
  */
 public class FileUtil 
 {	
-		
 	/**
-	 * Write matrix out to plaintext file
-	 * 
-	 * @param filename
-	 * @param mat
+	 * Dump Collection to file, one item per line
+	 * @param values
+	 * @param outname
 	 * @throws IOException
 	 */
-	public static void writeMatrix(String filename, Matrix mat) throws IOException
+	public static void writeLines(Collection<String> values, String outname)
+		throws IOException
 	{
-		FileWriter matout = new FileWriter(filename);
-		mat.exportToWriter(FileFormat.TXT, matout);
-		matout.close();	
+		FileWriter out = new FileWriter(new File(outname));
+		for(String val : values)
+			out.write(String.format("%s\n", val));
 	}
-	
+			
 	/**
 	 * Write these integers out to plaintext file
 	 * 
@@ -174,6 +173,20 @@ public class FileUtil
 		FileWriter out = new FileWriter(filename);
 		out.write(output);
 		out.close();
+	}
+	
+	/**
+	 * Write matrix out to plaintext file
+	 * 
+	 * @param filename
+	 * @param mat
+	 * @throws IOException
+	 */
+	public static void writeMatrix(String filename, Matrix mat) throws IOException
+	{
+		FileWriter matout = new FileWriter(filename);
+		mat.exportToWriter(FileFormat.TXT, matout);
+		matout.close();	
 	}
 	
 	/**
