@@ -19,6 +19,7 @@
 package logiclda;
 
 
+
 import java.util.*;
 import java.io.*;
 
@@ -32,6 +33,8 @@ import logiclda.rules.RuleType;
 import logiclda.rules.SeedRule;
 import logiclda.rules.SentExclRule;
 import logiclda.rules.SentInclRule;
+import logiclda.rules.CLRule;
+import logiclda.rules.MLRule;
 
 import org.ujmp.core.exceptions.MatrixException;
 
@@ -173,8 +176,8 @@ public class LogicLDA {
 		    			switch(rt) 
 		    			{
 		    				case SEED:
-                                                    rules.add(new SeedRule(sampWeight, stepWeight,
-                                                                           ruleToks));		 
+		    					rules.add(new SeedRule(sampWeight, stepWeight,
+		    							ruleToks));		 
 		    					break;
 		    				case SENTEXCL:
 		    					rules.add(new SentExclRule(sampWeight, 
@@ -182,6 +185,14 @@ public class LogicLDA {
 		    					break;	
 		    				case SENTINCL:
 		    					rules.add(new SentInclRule(sampWeight,
+		    							stepWeight, ruleToks));
+		    					break;
+		    				case CL:
+		    					rules.add(new CLRule(sampWeight,
+		    							stepWeight, ruleToks));
+		    					break;
+		    				case ML:
+		    					rules.add(new MLRule(sampWeight,
 		    							stepWeight, ruleToks));
 		    					break;
 		    				default: 

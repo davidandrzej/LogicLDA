@@ -8,7 +8,9 @@ public enum RuleType {
 
 	SEED("SEED"),
 	SENTEXCL("SENTEXCL"),
-	SENTINCL("SENTINCL");
+	SENTINCL("SENTINCL"),	
+	CL("CL"),
+	ML("ML");
 	
 	private final String ruleName;
 	
