@@ -111,6 +111,7 @@ public class SeedRule implements LogicRule {
 			groundings[i] = boxground[i];
 		
 		// Pre-calc gradients calculations
+		// (not dependent on zrelax so will never change)
 		//
 		gradient = new double[1][T];
 		for(Integer t = 0; t < T; t++)		
