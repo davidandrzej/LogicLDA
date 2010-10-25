@@ -22,7 +22,7 @@ public class SentExclRule implements LogicRule {
 	private long numGround;
 	
 	private int[] indices;
-	private double[][] gradient;
+	private int T;
 	
 	public SentExclRule(double sampWeight, double stepWeight,
 			Vector<String> argToks) 
@@ -44,8 +44,7 @@ public class SentExclRule implements LogicRule {
 		
 		// Init sentences to null (will be set later by applyEvidence)
 		//
-		this.indices = new int[2];
-		this.gradient = null;
+		this.indices = new int[2];		
 		this.sentences = null;
 	}
 	
@@ -102,9 +101,7 @@ public class SentExclRule implements LogicRule {
 			System.exit(1);
 		}
 		
-		// Gradient template (still need to calc using actual zrelax)
-		//
-		gradient = new double[2][T];
+		this.T = T;		
 	}
 
 	//
@@ -147,8 +144,9 @@ public class SentExclRule implements LogicRule {
 		indices[0] = excluderIdx;
 		indices[1] = excludeeIdx;
 		
-		// Construct 
-		// 
+		// Construct gradient
+		//
+		double[][] gradient = new double[2][this.T]; // default value is zero 
 		gradient[0][excluder] = -1 * stepWeight * relax.zrelax[excludeeIdx][excludee];
 		gradient[1][excludee] = -1 * stepWeight * relax.zrelax[excluderIdx][excluder];
 		
