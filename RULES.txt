@@ -1,0 +1,25 @@
+Rule types and formats (one rule per line in *.rules file)
+
+GENERAL FORM
+SampWeight StepWeight RuleType <rule parameters>
+-SampWeight = rule weight for purposes of stochastic gradient term sampling
+-StepWeight = rule weight for purposes of stochastic gradient step size
+-RuleType = type of rule (seed, sentincl, sentexcl, cl, ml)
+-<rule parameters> = rest of arguments vary depending on rule type
+
+SEED RULE
+1-50-seed-2-0 = assign all occurrences of word 2 to topic 0
+1-50-seed-2,7-0 = assign all occurrences of word 2 or 7 to topic 0
+1-50-seed-2 7-0 = assign all occurrences of bigram 2 7 to topic 0
+
+SENTINCL RULE
+100.0-100.0-sentincl-6-0 = allow topic 0 only if co-sent w/ topic 6
+
+SENTEXCL RULE
+1.0-10.0-sentexcl-0-7 = dis-allow co-sent topic 0 and topic 7
+
+CL RULE
+1.0-10.0-cl-3-5 = word 3 and word 5 should not be same topic
+
+ML RULE
+1.0-10.0-ml-2-4 = word 2 and word 4 should be same topic
