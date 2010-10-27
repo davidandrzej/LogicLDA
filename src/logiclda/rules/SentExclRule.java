@@ -18,6 +18,7 @@ public class SentExclRule implements LogicRule {
 	
 	// Maps sentence idx --> list of corpus idxs in that sentence
 	private HashMap<Integer, ArrayList<Integer>> sentences;
+	private int[] sentWeightIdx;
 	private double[] sentWeights; 
 	private long numGround;
 	
@@ -85,26 +86,27 @@ public class SentExclRule implements LogicRule {
 		}
 		
 		// We will sample groundings uniformly from sentence length squared
+		//
+		// sentWeightIdx is a new layer of indirection to allow non-sequential
+		// sentence indices (eg, 3 3 3 4 4 7 7 0 0 0), for example in a 
+		// cross-fold validation context
 		//  
+		sentWeightIdx = new int[sentences.keySet().size()];
 		sentWeights = new double[sentences.keySet().size()];
 		numGround = 0;
-		try 
+		
+		int sidx = 0;
+		for(Map.Entry<Integer, ArrayList<Integer>> entry : 
+			sentences.entrySet())
 		{
-			for(Map.Entry<Integer, ArrayList<Integer>> entry : 
-				sentences.entrySet())
-			{
-				double current = Math.pow(entry.getValue().size(), 2);
-				sentWeights[entry.getKey()] = current;
-				numGround += current;
-			}
-		}
-		catch (ArrayIndexOutOfBoundsException aioobe)
-		{
-			System.out.println(aioobe.toString());
-			System.out.println("ERROR: non-sequential sentence indices");
-			System.out.println("(e.g., 1 2 3 5)");
-			System.exit(1);
-		}
+			double current = Math.pow(entry.getValue().size(), 2);
+			
+			sentWeightIdx[sidx] = entry.getKey();
+			sentWeights[sidx] = current;
+			
+			numGround += current;
+			sidx += 1;
+		}				
 		
 		this.T = T;		
 	}
@@ -139,7 +141,8 @@ public class SentExclRule implements LogicRule {
 		
 		// Sample a random sentence
 		//
-		int si = MiscUtil.multSample(rng, sentWeights, (double) numGround);
+		int si = this.sentWeightIdx[MiscUtil.multSample(rng, sentWeights, 
+				(double) numGround)];
 		
 		// Sample a pair of corpus indices within this sentence
 		//
