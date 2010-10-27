@@ -24,6 +24,16 @@ public class DiscreteSample implements Sample {
 	public int[] z;
 	
 	
+	/**
+	 * Init from a given *.init or *.sample file
+	 * 
+	 * @param N
+	 * @param T
+	 * @param W
+	 * @param D
+	 * @param filename
+	 * @param c
+	 */
 	public DiscreteSample(int N, int T, int W, int D,
 			String filename, Corpus c)
 	{
@@ -40,6 +50,14 @@ public class DiscreteSample implements Sample {
 		this.fromFile(filename, c);
 	}
 	
+	/**
+	 * Init to empty sample
+	 * 
+	 * @param N
+	 * @param T
+	 * @param W
+	 * @param D
+	 */
 	public DiscreteSample(int N, int T, int W, int D)
 	{
 		// Hidden topic assignments
@@ -51,6 +69,38 @@ public class DiscreteSample implements Sample {
 		nwcolsums = new long[T];
 		for(int j = 0; j < T; j++)		
 			nwcolsums[j] = 0;				
+	}
+	
+	/**
+	 *  Init from a given z-assignment
+	 * @param N
+	 * @param T
+	 * @param W
+	 * @param D
+	 * @param givenz
+	 * @param c
+	 */
+	public DiscreteSample(int N, int T, int W, int D,
+			int[] givenz, Corpus c)
+	{
+		assert(givenz.length == N && c.N == N);
+		this.z = new int[N];		
+						
+		// Count matrices
+		nw = new long[W][T];
+		nd = new long[D][T];		
+		// Column sums for word-topic count array
+		nwcolsums = new long[T];
+		for(int j = 0; j < T; j++)		
+			nwcolsums[j] = 0;		
+		
+		// Set count matrices accordingly
+		for(int i = 0; i < z.length; i++)
+		{
+			assert(givenz[i] > 0 && givenz[i] < T);
+			this.z[i] = givenz[i];
+			updateCounts(c.w[i], z[i], c.d[i], 1);
+		}
 	}
 	
 	/**
