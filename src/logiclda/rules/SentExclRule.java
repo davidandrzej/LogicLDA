@@ -48,6 +48,11 @@ public class SentExclRule implements LogicRule {
 		this.sentences = null;
 	}
 	
+	public double getRuleWeight()
+	{
+		return this.sampWeight * this.stepWeight;
+	}
+	
 	public String toString()
 	{
 		return String.format("Sentence Exclusion Rule " +
@@ -122,7 +127,7 @@ public class SentExclRule implements LogicRule {
 		}		
 	}
 	
-	public double getWeight() 
+	public double getTotalSamplingWeight() 
 	{
 		evidenceCheck("getWeight()");
 		return sampWeight * numGround;		

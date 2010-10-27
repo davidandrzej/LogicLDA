@@ -20,7 +20,12 @@ public class LDARule implements LogicRule {
 		this.N = c.N;
 	}
 	
-	public double getWeight() 
+	public double getRuleWeight()
+	{
+		return this.ruleWeight;
+	}
+	
+	public double getTotalSamplingWeight() 
 	{
 		return N * ruleWeight;
 	}

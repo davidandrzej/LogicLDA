@@ -49,6 +49,11 @@ public class SentInclRule implements LogicRule
 		this.sentences = null;
 	}
 	
+	public double getRuleWeight()
+	{
+		return this.sampWeight * this.stepWeight;
+	}
+	
 	public String toString()
 	{
 		return String.format("Sentence Inclusion Rule " +
@@ -102,7 +107,7 @@ public class SentInclRule implements LogicRule
 	}
 	
 	
-	public double getWeight() 
+	public double getTotalSamplingWeight() 
 	{
 		evidenceCheck("getWeight()");				
 		return numGround * sampWeight;

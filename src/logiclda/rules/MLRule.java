@@ -51,6 +51,13 @@ public class MLRule implements LogicRule
 		this.idxB = null;
 	}
 
+	
+	public double getRuleWeight()
+	{
+		return this.sampWeight * this.stepWeight;
+	}
+	
+	
 	/**
 	 * Ensure that evidence has been applied 
 	 */	
@@ -68,7 +75,7 @@ public class MLRule implements LogicRule
 	/**
 	 * Total weight of rule (for sampling purposes) 
 	 */
-	public double getWeight() 
+	public double getTotalSamplingWeight() 
 	{
 		evidenceCheck("getWeight()");
 		return this.sampWeight * this.numGroundings();

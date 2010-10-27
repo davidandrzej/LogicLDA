@@ -63,6 +63,11 @@ public class SeedRule implements LogicRule {
 		this.groundings = null;		
 	}
 
+	public double getRuleWeight()
+	{
+		return this.sampWeight * this.stepWeight;
+	}
+	
 	public double[][] toZLabel(int N, int T)
 	{
 		evidenceCheck("toZLabel()");
@@ -139,7 +144,7 @@ public class SeedRule implements LogicRule {
 		}		
 	}
 	
-	public double getWeight() 
+	public double getTotalSamplingWeight() 
 	{
 		evidenceCheck("getWeight()");
 		

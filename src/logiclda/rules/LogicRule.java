@@ -10,10 +10,16 @@ public interface LogicRule
 {
 	
 	/**
-	 * Total weight of this rule for random sampling
-	 * @return [total weight] = [rule weight] x [num groundings] 
+	 * Weight of this rule for random sampling purposes
+	 * @return [total sampling weight] = [sampling weight] x [num groundings] 
 	 */
-	public double getWeight();
+	public double getTotalSamplingWeight();
+	
+	/**
+	 * Actual weight of this logic rule
+	 * @return [rule weight] = [sampling weight] * [step weight]
+	 */
+	public double getRuleWeight();	
 		 	
 	/**
 	 * Randomly sample a grounding and take a gradient step wrt to it
