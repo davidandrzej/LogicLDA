@@ -29,7 +29,7 @@ public class MirrorDescent
 		Vector<Double> vecRuleWeights = new Vector<Double>();
 		for(LogicRule lr : lstRules)
 		{
-			double weight = lr.getWeight();
+			double weight = lr.getTotalSamplingWeight();
 			ruleWeightSum += weight;
 			vecRuleWeights.add(weight);
 		}
@@ -96,7 +96,7 @@ public class MirrorDescent
 			retval += lr.toString();
 			long numground = lr.numGroundings();
 			retval += String.format("%d groundings (weight = %.1f)\n",
-					numground, lr.getWeight());
+					numground, lr.getTotalSamplingWeight());
 			int numsat = lr.numSat(z); 
 			retval += String.format("%d groundings satisfied (%d unsat)\n\n",
 					numsat, numground - numsat);
@@ -115,7 +115,7 @@ public class MirrorDescent
 		{
 			retval += lr.toString();
 			retval += String.format("%d groundings (weight = %.1f)\n\n",
-					lr.numGroundings(), lr.getWeight());								
+					lr.numGroundings(), lr.getTotalSamplingWeight());								
 		}
 		return retval;
 	}	

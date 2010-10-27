@@ -46,6 +46,7 @@ public class CollapsedGibbs {
 		return s;
 	}
 	
+	
 	/**
 	 * Do a single Collapsed Gibbs sample, but with topic-words Phi fixed
 	 * 
