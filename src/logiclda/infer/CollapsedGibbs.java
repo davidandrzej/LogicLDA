@@ -47,6 +47,52 @@ public class CollapsedGibbs {
 	}
 	
 	/**
+	 * Do a single Collapsed Gibbs sample, but with topic-words Phi fixed
+	 * 
+	 * @param c Contains words, documents
+	 * @param p Contains hyperparameters
+	 * @param s Sample object to be updated in place
+	 * @param rng Random number generator for sampling
+	 * @param onlineInit If true, don't pre-subtract counts 
+	 */
+	public static void fixedPhiSample(Corpus c, LDAParameters p, DiscreteSample s,
+			boolean onlineInit, double[][] phi)
+	{
+		int N = c.N;
+		int T = p.T;
+		
+		double[] tmp = new double[T];
+		for(int i = 0; i < N; i++)
+		{
+			// Reset sampling normalization sum to 0
+			double normsum = 0;
+
+			// Remove current assignment from counts
+			// (unless we're doing 'online-style' init)
+			if(!onlineInit)
+			{
+				s.updateCounts(c.w[i], s.z[i], c.d[i], -1);				
+			}
+		
+			// Get un-normalized probabilities for each topic
+			for(int j = 0; j < T; j++)
+			{				
+				double phiterm = phi[j][c.w[i]];
+				double num2 = s.nd[c.d[i]][j] + p.alpha[j];				
+				tmp[j] = phiterm * num2;
+				normsum += tmp[j];
+			}		
+			
+			// Sample the assignment
+			s.z[i] = MiscUtil.multSample(p.rng, tmp, normsum);
+			
+			// Update the count matrices
+			s.updateCounts(c.w[i], s.z[i], c.d[i], 1);			
+		}		
+		return;	
+	}
+	
+	/**
 	 * Do a single Collapsed Gibbs sample
 	 * 
 	 * @param c Contains words, documents
