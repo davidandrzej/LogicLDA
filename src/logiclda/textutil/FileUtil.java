@@ -1,5 +1,6 @@
 package logiclda.textutil;
 
+
 import java.io.*;
 import java.util.*;
 
@@ -16,6 +17,17 @@ import org.ujmp.core.exceptions.MatrixException;
  */
 public class FileUtil 
 {	
+	public static String intArrayToString(int[] a)
+	{
+		StringBuilder retval = new StringBuilder();
+		for(int val : a)
+		{
+			retval.append(String.format("%d ", val));
+		}
+		
+		return retval.toString();
+	}
+	
 	/**
 	 * Dump Collection to file, one item per line
 	 * @param values
