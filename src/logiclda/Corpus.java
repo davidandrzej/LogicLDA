@@ -34,6 +34,33 @@ public class Corpus {
 	
 	public HashMap<String,Object> sideInfo;
 	
+	
+	/**
+	 * Copy this corpus
+	 * 
+	 * TODO: does not support general metadata copying...!
+	 * 
+	 * @param c
+	 */
+	public Corpus(Corpus c)
+	{
+		this.N = c.N;
+		this.D = c.D;
+		this.W = c.W;
+		this.w = new int[c.w.length];
+		System.arraycopy(c.w, 0, this.w, 0, c.w.length);
+		this.d = new int[c.d.length];
+		System.arraycopy(c.d, 0, this.d, 0, c.d.length);
+				
+		this.vocab = new ArrayList<String>();
+		for(String v : c.vocab)
+			this.vocab.add(v);
+		
+		this.doclist = new ArrayList<String>();
+		for(String doc : c.doclist)
+			this.doclist.add(doc);		
+	}
+	
 	/**
 	 * Load text corpus from base filename
 	 * 
@@ -72,7 +99,7 @@ public class Corpus {
 			System.out.println(ioe.toString());
 		}
 	}
-	
+		
 	/**
 	 * Write out top N most probable words for each topic
 	 * 
