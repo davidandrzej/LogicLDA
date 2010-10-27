@@ -19,7 +19,7 @@ public class MirrorDescent
 	private Random rng;
 	private double[] ruleWeights;
 	private double ruleWeightSum;
-	private LogicRule[] rules;
+	public LogicRule[] rules;
 	private double pullfactor;
 	
 	public MirrorDescent(List<LogicRule> lstRules, int randseed)
