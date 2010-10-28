@@ -1,7 +1,11 @@
 package logiclda.eval;
 
 import logiclda.Corpus;
+import logiclda.MiscUtil;
+import logiclda.SideInfoType;
+import logiclda.textutil.FileUtil;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -78,7 +82,7 @@ public class Fold
 		ArrayList<Integer> newd = new ArrayList<Integer>();		
 		for(int i = 0; i < c.w.length; i++)
 		{
-			// Is this doc in the trainset?
+			// Is this doc in the fold?
 			if(mapping.containsKey(c.d[i]))
 			{
 				neww.add(c.w[i]);
@@ -92,9 +96,43 @@ public class Fold
 			newc.w[i] = neww.get(i);
 			newc.d[i] = newd.get(i);
 		}
+
 		// Record new corpus size
 		newc.N = neww.size();
 		
+		// Copy metadata - try each type of side information 
+		newc.sideInfo = new HashMap<String, Object>();
+		for(SideInfoType st : SideInfoType.values())
+		{
+			// Does corpus have this type of side info?
+			if(c.sideInfo.containsKey(st.infoName))
+			{
+				switch(st)
+				{
+				case SENTENCE:
+					// Only copy the sentence indices associated with 
+					// the documents in this fold
+					int[] sent = (int[]) c.sideInfo.get(st.infoName);
+					int[] newsent = new int[newc.w.length];
+					int si = 0;
+					for(int i = 0; i < c.w.length; i++)
+					{
+						// Is this doc in the trainset?
+						if(mapping.containsKey(c.d[i]))
+						{
+							newsent[si] = sent[i];
+							si += 1;
+						}
+					}
+					c.sideInfo.put(st.infoName, newsent);
+					break;		
+				default:
+					System.out.println(
+							String.format("SideInfoType %s not handled in Fold",
+									st.toString()));
+				}
+			}
+		}
 		return newc;
 	}
 }
