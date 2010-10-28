@@ -103,7 +103,7 @@ public class EvalLogic {
 
 		// Do inference over train/test folds
 		//
-		CrossFold cf = new CrossFold(new Corpus(basefn), k);
+		CrossFold cf = new CrossFold(new Corpus(basefn), k, randseed);
 		AvgSat[] satResults = new AvgSat[k];
 		for(int ki = 0; ki < k; ki++)
 		{
