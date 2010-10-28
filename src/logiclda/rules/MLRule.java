@@ -176,8 +176,7 @@ public class MLRule implements LogicRule
 	 * For this z-assignment, how many groundings are satisfied?
 	 */
 	public int numSat(int[] z) 
-	{
-
+	{		
 		// Get topic assignment counts for all word A idx 
 		int[] za = new int[this.T]; // default value is zero
 		for(int idx : this.idxA)

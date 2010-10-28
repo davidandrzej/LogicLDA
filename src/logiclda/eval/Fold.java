@@ -124,7 +124,8 @@ public class Fold
 							si += 1;
 						}
 					}
-					c.sideInfo.put(st.infoName, newsent);
+					// Store new sentences in new Corpus
+					newc.sideInfo.put(st.infoName, newsent);
 					break;		
 				default:
 					System.out.println(
