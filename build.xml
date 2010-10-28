@@ -63,61 +63,61 @@
     <target name="LogicLDA-fold 20news-allcomp">
         <java classname="logiclda.eval.EvalLogic" failonerror="true" fork="yes">
             <jvmarg line="-Xmx4g"/>
-            <arg line="/Users/andrzejewski1/code/eval-logic/20news-allcomp/20news-allcomp 2000 100 100000 1945 4"/>
+            <arg line="../eval-logic/20news-allcomp/20news-allcomp 2000 100 100000 1945 4"/>
             <classpath refid="LogicLDA.classpath"/>
         </java>
     </target>
     <target name="LogicLDA-fold macvspc">
         <java classname="logiclda.eval.EvalLogic" failonerror="true" fork="yes">
             <jvmarg line="-Xmx4g"/>
-            <arg line="/Users/andrzejewski1/code/eval-logic/macvspc/macvspc 2000 100 100000 1945 4"/>
+            <arg line="../eval-logic/macvspc/macvspc 2000 100 100000 1945 4"/>
             <classpath refid="LogicLDA.classpath"/>
         </java>
     </target>
     <target name="LogicLDA-fold polarity">
         <java classname="logiclda.eval.EvalLogic" failonerror="true" fork="yes">
             <jvmarg line="-Xmx4g"/>
-            <arg line="/Users/andrzejewski1/code/eval-logic/polarity/polarity 2000 100 100000 1945 4"/>
+            <arg line="../eval-logic/polarity/polarity 2000 100 100000 1945 4"/>
             <classpath refid="LogicLDA.classpath"/>
         </java>
     </target>
     <target name="LogicLDA-fold s1MLAB">
         <java classname="logiclda.eval.EvalLogic" failonerror="true" fork="yes">
             <jvmarg line="-Xmx4g"/>
-            <arg line="/Users/andrzejewski1/code/eval-logic/s1MLAB/s1MLAB 2000 100 100000 1925 2"/>
+            <arg line="../eval-logic/s1MLAB/s1MLAB 2000 100 100000 1925 2"/>
             <classpath refid="LogicLDA.classpath"/>
         </java>
     </target>
     <target name="LogicLDA-fold s2CLAB">
         <java classname="logiclda.eval.EvalLogic" failonerror="true" fork="yes">
             <jvmarg line="-Xmx4g"/>
-            <arg line="/Users/andrzejewski1/code/eval-logic/s2CLAB/s2CLAB 2000 100 100000 1945 4"/>
+            <arg line="../eval-logic/s2CLAB/s2CLAB 2000 100 100000 1945 4"/>
             <classpath refid="LogicLDA.classpath"/>
         </java>
     </target>
     <target name="LogicLDA-s1">
         <java classname="logiclda.LogicLDA" failonerror="true" fork="yes">
-            <arg line="/Users/andrzejewski1/code/eval-logic/s1MLAB/s1MLAB 100 50 10 3 194582"/>
+            <arg line="../eval-logic/s1MLAB/s1MLAB 100 50 10 3 194582"/>
             <classpath refid="LogicLDA.classpath"/>
         </java>
     </target>
     <target name="LogicLDA-s2">
         <java classname="logiclda.LogicLDA" failonerror="true" fork="yes">
-            <arg line="/Users/andrzejewski1/code/eval-logic/s2CLAB/s2CLAB 100 1 1 3 194582"/>
+            <arg line="../eval-logic/s2CLAB/s2CLAB 100 1 1 3 194582"/>
             <classpath refid="LogicLDA.classpath"/>
         </java>
     </target>
     <target name="LogicLDA-fold stewart-sentincl">
         <java classname="logiclda.eval.EvalLogic" failonerror="true" fork="yes">
             <jvmarg line="-Xmx4g"/>
-            <arg line="/Users/andrzejewski1/code/eval-logic/stewart-sentincl/stewart 2000 100 100000 1945 4"/>
+            <arg line="../eval-logic/stewart-sentincl/stewart 2000 100 100000 1945 4"/>
             <classpath refid="LogicLDA.classpath"/>
         </java>
     </target>
     <target name="LogicLDA-fold stewart-sentexcl">
         <java classname="logiclda.eval.EvalLogic" failonerror="true" fork="yes">
             <jvmarg line="-Xmx4g"/>
-            <arg line="/Users/andrzejewski1/code/eval-logic/stewart-sentexcl/stewart-sent 2000 100 100000 1945 4"/>
+            <arg line="../eval-logic/stewart-sentexcl/stewart 2000 100 100000 1945 4"/>
             <classpath refid="LogicLDA.classpath"/>
         </java>
     </target>
