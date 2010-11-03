@@ -23,3 +23,6 @@ CL RULE
 
 ML RULE
 1.0-10.0-ml-2-4 = word 2 and word 4 should be same topic
+
+DOC RULE
+1.0-10.0-doc-1-0,1,2 = assign words in docs labeled 1 to topic 0,1, or 2

@@ -20,6 +20,7 @@ package logiclda;
 
 
 
+
 import java.util.*;
 import java.io.*;
 
@@ -35,6 +36,7 @@ import logiclda.rules.SentExclRule;
 import logiclda.rules.SentInclRule;
 import logiclda.rules.CLRule;
 import logiclda.rules.MLRule;
+import logiclda.rules.DocRule;
 
 import org.ujmp.core.exceptions.MatrixException;
 
@@ -195,6 +197,10 @@ public class LogicLDA {
 		    					rules.add(new MLRule(sampWeight,
 		    							stepWeight, ruleToks));
 		    					break;
+		    				case DOCSEED:
+		    					rules.add(new DocRule(sampWeight,
+		    							stepWeight, ruleToks));
+		    					break;		    				
 		    				default: 
 		    					System.out.println("Unknown rule type");
 		    					System.out.println(rtStr);

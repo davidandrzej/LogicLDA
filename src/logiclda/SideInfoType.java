@@ -6,7 +6,8 @@ package logiclda;
  */
 public enum SideInfoType {
 
-	SENTENCE("sent");
+	SENTENCE("sent"),
+	DOCLABEL("doclabel");
 	
 	public final String infoName;
 	

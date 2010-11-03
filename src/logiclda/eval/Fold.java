@@ -127,6 +127,25 @@ public class Fold
 					// Store new sentences in new Corpus
 					newc.sideInfo.put(st.infoName, newsent);
 					break;		
+				case DOCLABEL:
+					// Only copy the doc labels for 
+					// the documents in this fold
+					int[] doclabel = (int[]) c.sideInfo.get(st.infoName);
+					int[] newdoclabel = new int[newc.D];
+					for(int di = 0; di < newc.D; di++)
+						newdoclabel[di] = -1;
+					
+					for(int di = 0; di < c.D; di++)
+					{
+						// Is this doc in the trainset?
+						if(mapping.containsKey(di))
+						{
+							newdoclabel[mapping.get(di)] = doclabel[di];							
+						}
+					}
+					// Store new doc labels in new Corpus
+					newc.sideInfo.put(st.infoName, newdoclabel);
+					break;		
 				default:
 					System.out.println(
 							String.format("SideInfoType %s not handled in Fold",

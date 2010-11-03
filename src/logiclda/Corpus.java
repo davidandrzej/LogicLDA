@@ -173,7 +173,12 @@ public class Corpus {
 					int[] sent = 
 						MiscUtil.intListUnbox(FileUtil.readIntFile(f.getCanonicalPath())); 
 					sideInfo.put("sent", sent);
-					break;		
+					break;	
+				case DOCLABEL:
+					int[] doclabel = 
+						MiscUtil.intListUnbox(FileUtil.readIntFile(f.getCanonicalPath())); 
+					sideInfo.put("doclabel", doclabel);
+					break;	
 				default:
 					System.out.println(
 							String.format("SideInfoType %s not handled in Corpus",
