@@ -1,5 +1,6 @@
 package logiclda.infer;
 
+
 import java.util.Random;
 
 import logiclda.Corpus;
@@ -131,7 +132,7 @@ public class CollapsedGibbs {
 				double num1 = s.nw[c.w[i]][j] + p.beta[j][c.w[i]];
 				double den1 = s.nwcolsums[j] + p.betasums[j];
 				double num2 = s.nd[c.d[i]][j] + p.alpha[j];				
-				tmp[j] = (num1 / den1) * num2 * logicweights[i][j];
+				tmp[j] = (num1 / den1) * num2 * Math.exp(logicweights[i][j]);
 				normsum += tmp[j];
 			}		
 			
