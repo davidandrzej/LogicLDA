@@ -125,7 +125,7 @@ public class EvalLogic {
 			if(numouter > 0)
 			{
 				// If we are going to run Logic SGD inference later, 
-				// run Logic Collapsed Gibbs for numsamp
+				// run Logic Collapsed Gibbs for numsamp
 				double[][] logicweights = rs.seedsToZL(train.N, p.T);
 				s = CollapsedGibbs.doLogicGibbs(logicweights, train, p, numsamp);
 			}

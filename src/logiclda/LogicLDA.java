@@ -84,7 +84,7 @@ public class LogicLDA {
 		else
 		{
 			// If we are going to run Logic SGD inference later, 
-			// run Logic Collapsed GibbsÊfor numsamp
+			// run Logic Collapsed Gibbs for numsamp
 			if(numouter > 0)
 			{
 				double[][] logicweights = rs.seedsToZL(c.N, p.T);
