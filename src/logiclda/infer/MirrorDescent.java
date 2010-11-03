@@ -1,5 +1,6 @@
 package logiclda.infer;
 
+
 import java.util.*;
 import java.io.*;
 
@@ -8,6 +9,7 @@ import logiclda.LDAParameters;
 import logiclda.MiscUtil;
 import logiclda.rules.LogicRule;
 import logiclda.rules.SeedRule;
+import logiclda.rules.IndependentRule;
 import logiclda.textutil.FileUtil;
 
 import org.ujmp.core.Matrix;
@@ -42,21 +44,20 @@ public class MirrorDescent
 	}
 
 	/**
-	 * Get the z-label weights for all SeedRule
-	 * (for use as input to pSSLDA code)
+	 * Get the z-label style weights for all IndependentRule 
+	 * (for use in Logic Collapsed Gibbs, etc)
 	 *  
 	 * @param N
 	 * @param T
 	 * @return
-	 * @throws ClassNotFoundException
 	 */
-	public double[][] seedsToZL(int N, int T) throws ClassNotFoundException 
+	public double[][] seedsToZL(int N, int T)
 	{
-		double[][] retval = new double[N][T];
+		double[][] retval = new double[N][T]; // defaults to zeros
 		for(LogicRule lr : rules)		
-			if(lr instanceof SeedRule)			
+			if(lr instanceof IndependentRule)			
 				MiscUtil.matrixDestructAdd(retval, 
-						((SeedRule) lr).toZLabel(N, T));
+						((IndependentRule) lr).toZLabel(N, T));
 		return retval;
 	}
 	

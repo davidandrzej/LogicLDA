@@ -119,8 +119,23 @@ public class EvalLogic {
 					train, p.T, randseed, ldaRule);		
 			System.out.println(rs.toString());
 
-			// Run standard LDA to init
-			DiscreteSample s = StandardLDA.runStandardLDA(train, p, numsamp);	 		
+			// Get init sample from Collapsed Gibbs
+			//
+			DiscreteSample s;
+			if(numouter > 0)
+			{
+				// If we are going to run Logic SGD inference later, 
+				// run Logic Collapsed Gibbs for numsamp
+				double[][] logicweights = rs.seedsToZL(train.N, p.T);
+				s = CollapsedGibbs.doLogicGibbs(logicweights, train, p, numsamp);
+			}
+			else
+			{
+				// else assume we were meant to use no logic whatsoever...
+				s = StandardLDA.runStandardLDA(train, p, numsamp);
+			}
+			
+			
 			// Run LogicLDA MAP inference	 		
 			RelaxedSample relax = LogicLDA.runLogicLDA(train, p, rs, s, numouter, numinner);
 			// Extract learned phi

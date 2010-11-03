@@ -13,7 +13,7 @@ import logiclda.SideInfoType;
 import logiclda.infer.Gradient;
 import logiclda.infer.RelaxedSample;
 
-public class DocRule implements LogicRule {
+public class DocRule implements IndependentRule {
 
 	private int docLabel;
 	private HashSet<Integer> hashSeedTopics;
@@ -106,6 +106,18 @@ public class DocRule implements LogicRule {
 	//
 	// Methods below should only be called after applyEvidence()
 	//	
+	
+	public double[][] toZLabel(int N, int T)
+	{
+		evidenceCheck("toZLabel()");
+
+		double[][] retval = new double[N][T];
+		
+		for(int i : groundings)		
+			for(int t = 0; t < T; t++)			
+				retval[i][t] = gradient[0][t] * sampWeight;		
+		return retval;
+	}
 	
 	@Override
 	public double getTotalSamplingWeight() 

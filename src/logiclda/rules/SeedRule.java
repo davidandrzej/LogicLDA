@@ -9,7 +9,7 @@ import logiclda.infer.RelaxedSample;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 
-public class SeedRule implements LogicRule {
+public class SeedRule implements IndependentRule {
 
 	private Seeds seedWords;
 	private HashSet<Integer> hashSeedTopics;

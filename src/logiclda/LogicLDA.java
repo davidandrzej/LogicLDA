@@ -25,6 +25,7 @@ import java.util.*;
 import java.io.*;
 
 import logiclda.StandardLDA;
+import logiclda.infer.CollapsedGibbs;
 import logiclda.infer.DiscreteSample;
 import logiclda.infer.RelaxedSample;
 import logiclda.infer.MirrorDescent;
@@ -76,12 +77,26 @@ public class LogicLDA {
 		File init = new File(String.format("%s.%s", basefn, "init"));
 		DiscreteSample s;
 		if(init.exists())
+		{
 			// from *.init file
 			s = new DiscreteSample(c.N, p.T, c.W, c.D, init.getCanonicalPath(), c);
+		}
 		else
-			// run standard LDA for numsamp 
-			s = StandardLDA.runStandardLDA(c, p, numsamp);
- 		
+		{
+			// If we are going to run Logic SGD inference later, 
+			// run Logic Collapsed GibbsÊfor numsamp
+			if(numouter > 0)
+			{
+				double[][] logicweights = rs.seedsToZL(c.N, p.T);
+				s = CollapsedGibbs.doLogicGibbs(logicweights, c, p, numsamp);
+			}
+			else
+			{
+				// else assume we were meant to use no logic whatsoever...
+				s = StandardLDA.runStandardLDA(c, p, numsamp);
+			}
+		}
+		
 		// Run LogicLDA MAP inference
  		//
  		RelaxedSample relax = runLogicLDA(c, p, rs, s, numouter, numinner);
