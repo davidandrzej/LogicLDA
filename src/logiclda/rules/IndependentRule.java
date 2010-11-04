@@ -1,7 +1,8 @@
 package logiclda.rules;
 
+
 import java.util.Map;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Interface for a LogicRule which can easily be grounded/propositionalized
@@ -24,6 +25,6 @@ public interface IndependentRule extends LogicRule
 	 * @param T
 	 * @return
 	 */
-	public double[][] toZLabel(int N, int T);	
+	public Map<Integer, ArrayList<Double>> toZLabel(int N, int T);	
 	
 }

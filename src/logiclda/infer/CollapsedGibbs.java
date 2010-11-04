@@ -2,6 +2,8 @@ package logiclda.infer;
 
 
 import java.util.Random;
+import java.util.Map;
+import java.util.ArrayList;
 
 import logiclda.Corpus;
 import logiclda.LDAParameters;
@@ -73,7 +75,7 @@ public class CollapsedGibbs {
 	 * @param randseed Seed for random number generator 
 	 * @return The final sample from the Markov Chain
 	 */
-	public static DiscreteSample doLogicGibbs(double[][] logicweights, 
+	public static DiscreteSample doLogicGibbs(Map<Integer, ArrayList<Double>> logicweights, 
 			Corpus c, LDAParameters p, int numsamp)
 	{
 		// Get relevant dimensions
@@ -106,7 +108,7 @@ public class CollapsedGibbs {
 	 * @param rng Random number generator for sampling
 	 * @param onlineInit If true, don't pre-subtract counts 
 	 */
-	public static void logicGibbsSample(double[][] logicweights,
+	public static void logicGibbsSample(Map<Integer, ArrayList<Double>> logicweights,
 			Corpus c, LDAParameters p, DiscreteSample s, 
 			boolean onlineInit)            
 	{				
@@ -131,8 +133,11 @@ public class CollapsedGibbs {
 			{
 				double num1 = s.nw[c.w[i]][j] + p.beta[j][c.w[i]];
 				double den1 = s.nwcolsums[j] + p.betasums[j];
-				double num2 = s.nd[c.d[i]][j] + p.alpha[j];				
-				tmp[j] = (num1 / den1) * num2 * Math.exp(logicweights[i][j]);
+				double num2 = s.nd[c.d[i]][j] + p.alpha[j];		
+				if(logicweights.containsKey(i))
+					tmp[j] = (num1 / den1) * num2 * Math.exp(logicweights.get(i).get(j));
+				else
+					tmp[j] = (num1 / den1) * num2;
 				normsum += tmp[j];
 			}		
 			

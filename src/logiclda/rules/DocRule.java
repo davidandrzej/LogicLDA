@@ -1,9 +1,11 @@
 package logiclda.rules;
 
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -107,16 +109,22 @@ public class DocRule implements IndependentRule {
 	// Methods below should only be called after applyEvidence()
 	//	
 	
-	public double[][] toZLabel(int N, int T)
+	public Map<Integer, ArrayList<Double>> toZLabel(int N, int T)
 	{
 		evidenceCheck("toZLabel()");
 
-		double[][] retval = new double[N][T];
+		// Instantiate gradient		
+		ArrayList<Double> gradvals = new ArrayList<Double>();
+		for(int t = 0; t < T; t++)
+			gradvals.add(gradient[0][t] * sampWeight);
 		
+		// Populate z-label weights
+		Map<Integer, ArrayList<Double>> retval = 
+			new HashMap<Integer, ArrayList<Double>>();	 			
 		for(int i : groundings)		
-			for(int t = 0; t < T; t++)			
-				retval[i][t] = gradient[0][t] * sampWeight;		
-		return retval;
+			retval.put(i, gradvals);
+								
+		return retval;		
 	}
 	
 	@Override

@@ -87,7 +87,7 @@ public class LogicLDA {
 			// run Logic Collapsed Gibbs for numsamp
 			if(numouter > 0)
 			{
-				double[][] logicweights = rs.seedsToZL(c.N, p.T);
+				Map<Integer, ArrayList<Double>> logicweights = rs.seedsToZL(c.N, p.T);
 				s = CollapsedGibbs.doLogicGibbs(logicweights, c, p, numsamp);
 			}
 			else

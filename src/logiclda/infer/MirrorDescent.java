@@ -51,13 +51,14 @@ public class MirrorDescent
 	 * @param T
 	 * @return
 	 */
-	public double[][] seedsToZL(int N, int T)
+	public Map<Integer, ArrayList<Double>> seedsToZL(int N, int T)
 	{
-		double[][] retval = new double[N][T]; // defaults to zeros
+		Map<Integer, ArrayList<Double>> retval = new
+		 	HashMap<Integer, ArrayList<Double>>();
+		
 		for(LogicRule lr : rules)		
 			if(lr instanceof IndependentRule)			
-				MiscUtil.matrixDestructAdd(retval, 
-						((IndependentRule) lr).toZLabel(N, T));
+				MiscUtil.hashMerge(retval, ((IndependentRule) lr).toZLabel(N, T));				
 		return retval;
 	}
 	

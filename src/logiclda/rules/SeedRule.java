@@ -68,16 +68,22 @@ public class SeedRule implements IndependentRule {
 		return this.sampWeight * this.stepWeight;
 	}
 	
-	public double[][] toZLabel(int N, int T)
+	public Map<Integer, ArrayList<Double>> toZLabel(int N, int T)
 	{
 		evidenceCheck("toZLabel()");
 
-		double[][] retval = new double[N][T];
+		// Instantiate gradient		
+		ArrayList<Double> gradvals = new ArrayList<Double>();
+		for(int t = 0; t < T; t++)
+			gradvals.add(gradient[0][t] * sampWeight);
 		
+		// Populate z-label weights
+		Map<Integer, ArrayList<Double>> retval = 
+			new HashMap<Integer, ArrayList<Double>>();	 			
 		for(int i : groundings)		
-			for(int t = 0; t < T; t++)			
-				retval[i][t] = gradient[0][t] * sampWeight;		
-		return retval;
+			retval.put(i, gradvals);
+								
+		return retval;		
 	}
 	
 	public String toString()

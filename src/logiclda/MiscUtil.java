@@ -2,9 +2,38 @@ package logiclda;
 
 import java.util.*;
 
+import logiclda.rules.IndependentRule;
+
 public class MiscUtil {
 	
 
+	/**
+	 * (destructively) merge these two hashes by summing in-place in h1.
+	 * 
+	 * 
+	 * @param h1
+	 * @param h2
+	 * @return
+	 */
+	public static Map<Integer, ArrayList<Double>> hashMerge(
+			Map<Integer, ArrayList<Double>> h1,
+			Map<Integer, ArrayList<Double>> h2)
+	{
+
+		for(Map.Entry<Integer, ArrayList<Double>> kv : h2.entrySet())
+		{
+			if(h1.containsKey(kv.getKey()))
+			{
+				ArrayList<Double> vals1 = h1.get(kv.getKey());				
+				for(int ti = 0; ti < vals1.size(); ti++)				
+					vals1.add(ti, vals1.get(ti) + kv.getValue().get(ti));									
+			}
+			else							
+				h1.put(kv.getKey(), kv.getValue());
+		}
+		return h1;
+	}
+	
 	public static void matrixDestructAdd(double[][] m1, double[][] m2)
 	{
 		assert(m1.length == m2.length);
