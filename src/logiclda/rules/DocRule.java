@@ -111,11 +111,15 @@ public class DocRule implements IndependentRule {
 	{
 		evidenceCheck("toZLabel()");
 
-		double[][] retval = new double[N][T];
+		// entries *not* associated with weights will be null
+		double[][] retval = new double[N][];
 		
 		for(int i : groundings)		
+		{			
+			retval[i] = new double[T];
 			for(int t = 0; t < T; t++)			
-				retval[i][t] = gradient[0][t] * sampWeight;		
+				retval[i][t] = gradient[0][t] * sampWeight;
+		}
 		return retval;
 	}
 	
