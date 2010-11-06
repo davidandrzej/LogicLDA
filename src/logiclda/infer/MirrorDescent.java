@@ -53,11 +53,30 @@ public class MirrorDescent
 	 */
 	public double[][] seedsToZL(int N, int T)
 	{
-		double[][] retval = new double[N][T]; // defaults to zeros
-		for(LogicRule lr : rules)		
+		double[][] retval = new double[N][]; // default to null
+		for(LogicRule lr : rules)	
+		{
 			if(lr instanceof IndependentRule)			
-				MiscUtil.matrixDestructAdd(retval, 
-						((IndependentRule) lr).toZLabel(N, T));
+			{
+				// Need to 'sparse-add' these double[][] 
+				double[][] ruleweights = ((IndependentRule) lr).toZLabel(N, T); 
+				for(int i = 0; i < N; i++)
+				{
+					if(ruleweights[i] != null && retval[i] != null)
+					{
+						// both non-null, need to add
+						for(int t = 0; t < ruleweights[i].length; t++)
+							retval[i][t] += ruleweights[i][t];
+					}
+					else if(ruleweights[i] != null)
+					{
+						// only ruleweights non-null, just copy over
+						retval[i] = ruleweights[i];
+					}
+					// ruleweights null so just continue
+				}
+			}
+		}
 		return retval;
 	}
 	
