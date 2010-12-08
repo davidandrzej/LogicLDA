@@ -117,10 +117,11 @@ public class TextReader {
 				boolean emptySentence = true;
 				for(String tok : toks)
 				{
-					if(vocab.containsKey(tok))
+					String lowTok= tok.toLowerCase();
+					if(vocab.containsKey(lowTok))
 					{
 						emptySentence = false;
-						wordOut.write(String.format("%d ", vocab.get(tok)));
+						wordOut.write(String.format("%d ", vocab.get(lowTok)));
 						docOut.write(String.format("%d ", di));
 						sentOut.write(String.format("%d ", si));
 						i += 1;
@@ -215,7 +216,7 @@ public class TextReader {
 		//
 		counts = threshFilter(counts, threshold);
 		
-		FileUtil.writeLines(counts.keySet(), outname);		
+		FileUtil.writeLines(counts.keySet(), String.format("%s.vocab",outname));
 	}
 
 	/**
