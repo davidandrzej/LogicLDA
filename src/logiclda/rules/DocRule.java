@@ -113,18 +113,19 @@ public class DocRule implements IndependentRule {
 	{
 		evidenceCheck("toZLabel()");
 
-		// Instantiate gradient		
-		ArrayList<Double> gradvals = new ArrayList<Double>();
-		for(int t = 0; t < T; t++)
-			gradvals.add(gradient[0][t] * sampWeight);
+		// entries *not* associated with weights will be null
+		double[][] retval = new double[N][];
 		
 		// Populate z-label weights
 		Map<Integer, ArrayList<Double>> retval = 
 			new HashMap<Integer, ArrayList<Double>>();	 			
 		for(int i : groundings)		
-			retval.put(i, gradvals);
-								
-		return retval;		
+		{			
+			retval[i] = new double[T];
+			for(int t = 0; t < T; t++)			
+				retval[i][t] = gradient[0][t] * sampWeight;
+		}
+		return retval;
 	}
 	
 	@Override
