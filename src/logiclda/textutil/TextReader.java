@@ -216,7 +216,10 @@ public class TextReader {
 		//
 		counts = threshFilter(counts, threshold);
 		
-		FileUtil.writeLines(counts.keySet(), String.format("%s.vocab",outname));
+		Set<String> finalVocab = new HashSet<String>(counts.keySet());
+		
+		FileUtil.writeLines(finalVocab, String.format("%s.vocab",outname));
+		//FileUtil.writeLines(counts.keySet(), String.format("%s.vocab",outname));
 	}
 
 	/**

@@ -39,7 +39,9 @@ public class FileUtil
 	{
 		FileWriter out = new FileWriter(new File(outname));
 		for(String val : values)
+		{				
 			out.write(String.format("%s\n", val));
+		}
 	}
 			
 	/**
