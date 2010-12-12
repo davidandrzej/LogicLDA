@@ -126,7 +126,7 @@ public class EvalLogic {
 			{
 				// If we are going to run Logic SGD inference later, 
 				// run Logic Collapsed Gibbs for numsamp
-				Map<Integer, ArrayList<Double>> logicweights = rs.seedsToZL(train.N, p.T);
+				double[][] logicweights = rs.seedsToZL(train.N, p.T);
 				s = CollapsedGibbs.doLogicGibbs(logicweights, train, p, numsamp);
 			}
 			else

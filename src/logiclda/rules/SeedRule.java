@@ -68,7 +68,7 @@ public class SeedRule implements IndependentRule {
 		return this.sampWeight * this.stepWeight;
 	}
 	
-	public Map<Integer, ArrayList<Double>> toZLabel(int N, int T)
+	public double[][] toZLabel(int N, int T)
 	{
 		evidenceCheck("toZLabel()");
 

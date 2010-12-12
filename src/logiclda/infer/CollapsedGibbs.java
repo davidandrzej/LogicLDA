@@ -75,7 +75,7 @@ public class CollapsedGibbs {
 	 * @param randseed Seed for random number generator 
 	 * @return The final sample from the Markov Chain
 	 */
-	public static DiscreteSample doLogicGibbs(Map<Integer, ArrayList<Double>> logicweights, 
+	public static DiscreteSample doLogicGibbs(double[][] logicweights, 
 			Corpus c, LDAParameters p, int numsamp)
 	{
 		// Get relevant dimensions
@@ -108,7 +108,7 @@ public class CollapsedGibbs {
 	 * @param rng Random number generator for sampling
 	 * @param onlineInit If true, don't pre-subtract counts 
 	 */
-	public static void logicGibbsSample(Map<Integer, ArrayList<Double>> logicweights,
+	public static void logicGibbsSample(double[][] logicweights,
 			Corpus c, LDAParameters p, DiscreteSample s, 
 			boolean onlineInit)            
 	{				
