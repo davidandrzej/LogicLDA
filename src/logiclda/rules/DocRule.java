@@ -109,7 +109,7 @@ public class DocRule implements IndependentRule {
 	// Methods below should only be called after applyEvidence()
 	//	
 	
-	public Map<Integer, ArrayList<Double>> toZLabel(int N, int T)
+	public double[][] toZLabel(int N, int T)
 	{
 		evidenceCheck("toZLabel()");
 
@@ -117,8 +117,6 @@ public class DocRule implements IndependentRule {
 		double[][] retval = new double[N][];
 		
 		// Populate z-label weights
-		Map<Integer, ArrayList<Double>> retval = 
-			new HashMap<Integer, ArrayList<Double>>();	 			
 		for(int i : groundings)		
 		{			
 			retval[i] = new double[T];

@@ -25,6 +25,6 @@ public interface IndependentRule extends LogicRule
 	 * @param T
 	 * @return
 	 */
-	public Map<Integer, ArrayList<Double>> toZLabel(int N, int T);	
+	public double[][] toZLabel(int N, int T);	
 	
 }

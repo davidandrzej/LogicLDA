@@ -51,7 +51,7 @@ public class MirrorDescent
 	 * @param T
 	 * @return
 	 */
-	public Map<Integer, ArrayList<Double>> seedsToZL(int N, int T)
+	public double[][] seedsToZL(int N, int T)
 	{
 		double[][] retval = new double[N][]; // default to null
 		for(LogicRule lr : rules)	
