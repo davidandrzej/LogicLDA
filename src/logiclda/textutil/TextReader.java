@@ -442,23 +442,16 @@ public class TextReader {
 			System.out.println(String.format("Doc %d of %d", ctr + 1, N));
 			ctr += 1;
 			
-			BufferedReader in = new BufferedReader(new FileReader(txtFile));
-			String line = in.readLine();
-			while(line != null)
-			{				
-				for(String tok : tkizer.tokenize(line))
-				{
-					String lowTok= tok.toLowerCase();
-					if(counts.containsKey(lowTok))
-						counts.put(lowTok, counts.get(lowTok) + 1);
-					else
-						counts.put(lowTok, 1);
-				}
-				line = in.readLine();
-			}			
-			in.close();
-		}	
-		
+                        String doc = FileUtil.fileSlurp(txtFile);
+                        for(String tok : tkizer.tokenize(doc))
+                            {                                
+                                String lowTok = tok.toLowerCase();
+                                if(counts.containsKey(lowTok))
+                                    counts.put(lowTok, counts.get(lowTok) + 1);
+                                else
+                                    counts.put(lowTok, 1);
+                            }
+                }			                				
 		return counts;
 	}
 
