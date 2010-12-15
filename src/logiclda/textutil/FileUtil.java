@@ -169,6 +169,7 @@ public class FileUtil
 		while(line != null)
 		{				
 			fileContent.append(line);
+			fileContent.append(" ");
 			line = in.readLine();
 		}			
 		in.close();
