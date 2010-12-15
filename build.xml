@@ -17,7 +17,7 @@
         <pathelement location="lib/maxent-2.5.2.jar"/>
         <pathelement location="lib/opennlp-tools-1.4.3.jar"/>
         <pathelement location="lib/trove.jar"/>
-        <pathelement location="lib/ujmp-complete-0.2.4.jar"/>
+        <pathelement location="lib/ujmp-complete-0.2.5.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
@@ -137,6 +137,24 @@
     <target name="LogicLDA-standard LDA">
         <java classname="logiclda.StandardLDA" failonerror="true" fork="yes">
             <arg line="/Users/andrzejewski1/code/eval-logic/s1MLAB/s1MLAB 100 3 194582"/>
+            <classpath refid="LogicLDA.classpath"/>
+        </java>
+    </target>
+    <target name="wordcount">
+        <java classname="logiclda.textutil.TextReader" failonerror="true" fork="yes">
+            <arg line="wordcount /home/andrzejewski1/projects/20news/new-full/news.doclist /home/andrzejewski1/data/news.stop /home/andrzejewski1/projects/20news/new-full/news.counts"/>
+            <classpath refid="LogicLDA.classpath"/>
+        </java>
+    </target>
+    <target name="getvocab">
+        <java classname="logiclda.textutil.TextReader" failonerror="true" fork="yes">
+            <arg line="getvocab /home/andrzejewski1/projects/20news/new-full/news.doclist /home/andrzejewski1/data/news.stop 25 /home/andrzejewski1/projects/20news/new-full/news"/>
+            <classpath refid="LogicLDA.classpath"/>
+        </java>
+    </target>
+    <target name="makecorpus">
+        <java classname="logiclda.textutil.TextReader" failonerror="true" fork="yes">
+            <arg line="makecorpus /home/andrzejewski1/projects/20news/new-full/news.doclist /home/andrzejewski1/projects/20news/new-full/news.vocab /home/andrzejewski1/projects/20news/new-full/news"/>
             <classpath refid="LogicLDA.classpath"/>
         </java>
     </target>
