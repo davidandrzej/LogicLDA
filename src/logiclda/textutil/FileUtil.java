@@ -42,6 +42,7 @@ public class FileUtil
 		{				
 			out.write(String.format("%s\n", val));
 		}
+		out.close();
 	}
 			
 	/**
