@@ -4,7 +4,10 @@ package logiclda.infer;
 import java.util.Random;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.List;
 
+import logiclda.rules.GroundableRule;
+import logiclda.infer.GroundRules;
 import logiclda.Corpus;
 import logiclda.LDAParameters;
 import logiclda.MiscUtil;
@@ -64,16 +67,51 @@ public class CollapsedGibbs {
 		return;	
 	}
 	
+	/**
+	 * Externally called method for Ground LogicLDA sampling
+	 * @param gr
+	 * @param c
+	 * @param p
+	 * @param numsamp
+	 * @return
+	 */
+	public static DiscreteSample doGroundGibbs(List<GroundableRule> grules,
+			Corpus c, LDAParameters p, int numsamp)
+	{
+		// Get relevant dimensions
+		int N = c.N;		
+		int T = p.T;
+		int W = p.W;
+		int D = c.D;
+		
+		// Online initialization
+		DiscreteSample s = new DiscreteSample(N, T, W, D);
+		CollapsedGibbs.gibbsSample(c, p, s, true);
+						
+		// Ground the Logic Rules
+		GroundRules gr = new GroundRules(grules, s.z, p.rng);
+		
+		// Do the samples
+		for(int si = 0; si < numsamp; si++)
+		{
+			System.out.println(String.format("Sample %d of %d", si, numsamp));
+			CollapsedGibbs.groundGibbsSample(gr, c, p, s, false);
+		}
+		
+		return s;
+	}
+	
 	
 	/**
-	 * Do a single Logic
+	 * Do a single Ground LogicLDA sample
+	 * 
 	 * @param logicweights
 	 * @param c
 	 * @param p
 	 * @param s
 	 * @param onlineInit
 	 */
-	public static void groundGibbsSample(double[][] logicweights,
+	public static void groundGibbsSample(GroundRules gr,
 			Corpus c, LDAParameters p, DiscreteSample s, 
 			boolean onlineInit)            
 	{				
@@ -99,10 +137,13 @@ public class CollapsedGibbs {
 				double num1 = s.nw[c.w[i]][j] + p.beta[j][c.w[i]];
 				double den1 = s.nwcolsums[j] + p.betasums[j];
 				double num2 = s.nd[c.d[i]][j] + p.alpha[j];			
-				if(logicweights[i] != null)
-					tmp[j] = (num1 / den1) * num2 * Math.exp(logicweights[i][j]);
-				else
-					tmp[j] = (num1 / den1) * num2;
+				
+				// Multiply the standard Collapsed Gibbs term 
+				// by the exp of the logic contribution
+				s.z[i] = j;
+				tmp[j] = (num1 / den1) * num2; 
+				tmp[j] *= Math.exp(gr.evalAssign(s.z, i));
+								
 				normsum += tmp[j];
 			}		
 			

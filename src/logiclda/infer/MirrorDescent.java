@@ -24,7 +24,7 @@ public class MirrorDescent
 	public LogicRule[] rules;
 	private double pullfactor;
 	
-	public MirrorDescent(List<LogicRule> lstRules, int randseed)
+	public MirrorDescent(List<LogicRule> lstRules, Random rng)
 	{		
 		// Rule weights will be used for sampling
 		ruleWeightSum = 0;
@@ -38,7 +38,7 @@ public class MirrorDescent
 		ruleWeights = MiscUtil.doubleListUnbox(vecRuleWeights);
 		
 		// Save the actual rules and random number generator
-		rng = new Random(randseed);
+		this.rng = rng;
 		rules = new LogicRule[lstRules.size()];
 		rules = lstRules.toArray(rules);
 	}

@@ -20,12 +20,12 @@ import logiclda.infer.DiscreteSample;
 
 /**
  * 
- * MaxWalkSAT solver for weighted satisfiability 
+ * LDAMaxWalkSAT - like MaxWalkSAT but take LDA phi/theta into account
  * 
  * @author david
  *
  */
-public class MaxWalkSAT {
+public class LDAMaxWalkSAT {
 
 	
 	public static void main(String [] args)
@@ -67,8 +67,8 @@ public class MaxWalkSAT {
 		List<GroundableRule> grules = new ArrayList<GroundableRule>();
 		for(LogicRule r : rules)
 			grules.add((GroundableRule) r);		
-		doMWS(grules, p, numiter, prand, s);
-		
+		doLDAMWS(c, p, grules, numiter, numiter, prand, s);
+				
 		DiscreteSample finalz = new DiscreteSample(c.N, p.T, p.W, c.D, s.z, c);
 						
 		// Write out results
@@ -82,7 +82,7 @@ public class MaxWalkSAT {
 	
 	/**
 	 * 
-	 * Do MaxWalkSAT inference
+	 * Do LDA-MaxWalkSAT inference
 	 * 
 	 * @param lstRules
 	 * @param p
@@ -92,12 +92,11 @@ public class MaxWalkSAT {
 	 * @param randseed
 	 * @return
 	 */
-	public static DiscreteSample doMWS(List<GroundableRule> lstRules,
-			LDAParameters p,
-			int numiter, 
+	public static DiscreteSample doLDAMWS(Corpus c, 
+			LDAParameters p, List<GroundableRule> lstRules,
+			int numouter, int numinner,
 			double prand, DiscreteSample s)
-	{
-		
+	{		
 		// Init data structures
 		//
 		GroundRules gr = new GroundRules(lstRules, s.z, p.rng);
@@ -105,45 +104,62 @@ public class MaxWalkSAT {
 		double[] randvsgreedy = new double[2];
 		randvsgreedy[0] = prand;
 		randvsgreedy[1] = 1 - prand;		
-				
-		for(int i = 0; i < numiter; i++)
+
+		// Init phi/theta
+		double[][] phi = new double[p.T][p.W];
+		double[][] theta = new double[c.D][p.T];
+		
+		for(int i = 0; i < numouter; i++)
 		{
-			if(i % 100 == 0)
+			//
+			// OUTER LOOP
+			// Estimate MAP phi/theta
+			//
+			phi = s.mapPhi(p, phi);
+			theta = s.mapTheta(p, theta);
+			
+			for(int j = 0; j < numinner; j++)
 			{
-				System.out.println(String.format("MWS Iter %d of %d", i+1, numiter));
-				for(GroundableRule rule : lstRules)
-					System.out.println(String.format("Rule: %s\t%d sat\n\t%d unsat\n\t%d total",
-							rule.toString(), rule.numSat(s.z), rule.getUnSat().size(), 
-							rule.numGroundings()));
+				//
+				// INNER LOOP
+				// Optimize Z with LDA-MaxWalkSAT
+				//
+										
+				// TODO: Optimize the non-logic z with argmax
+				
+				// Sample an unsatisfied clause 
+				Grounding g = gr.randomUnsat();
+			
+				// If none, then we're done!
+				if(g == null)
+					break;
+			
+				// Decide on random vs greedy step
+				int idx, newz;
+				if(0 == MiscUtil.multSample(gr.rng, randvsgreedy, 1.0))
+				{
+					// RANDOM STEP
+					idx = g.values[gr.rng.nextInt(g.values.length)];
+					newz = gr.rng.nextInt(p.T);								
+				}
+				else
+				{
+					// GREEDY STEP
+					int[] bestidxnewz = gr.getGreedy(s.z, g, p.T);
+					idx = bestidxnewz[0]; 
+					newz = bestidxnewz[1];
+				}	
+			
+				// Take the step
+				s.updateCounts(c.w[idx], s.z[idx], c.d[idx], -1);				
+				s.z[idx] = newz;
+				s.updateCounts(c.w[idx], s.z[idx], c.d[idx], 1);				
+				
+				// Update ground rule satisfaction
+				gr.updateUnsat(s.z, idx);
 			}
-			
-			// Sample an unsatisfied clause 
-			Grounding g = gr.randomUnsat();
-			
-			// If none, then we're done!
-			if(g == null)
-				break;
-			
-			// Decide on random vs greedy step
-			int idx, newz;
-			if(0 == MiscUtil.multSample(gr.rng, randvsgreedy, 1.0))
-			{
-				// RANDOM STEP
-				idx = g.values[gr.rng.nextInt(g.values.length)];
-				newz = gr.rng.nextInt(p.T);								
-			}
-			else
-			{
-				// GREEDY STEP
-				int[] bestidxnewz = gr.getGreedy(s.z, g, p.T);
-				idx = bestidxnewz[0]; 
-				newz = bestidxnewz[1];
-			}	
-			
-			// Take the step
-			s.z[idx] = newz;				
-			gr.updateUnsat(s.z, idx);
-		}				
+		}
+		
 		return s;
 	}
 	

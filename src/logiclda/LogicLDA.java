@@ -157,7 +157,7 @@ public class LogicLDA {
  		for(LogicRule lr : rules)
 			lr.applyEvidence(c, T);
 		// Create RuleSet
- 		return new MirrorDescent(rules, randseed + 1);	
+ 		return new MirrorDescent(rules, new Random(randseed + 1));	
 	}
 	
 	/**

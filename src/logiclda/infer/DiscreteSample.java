@@ -18,6 +18,10 @@ import logiclda.textutil.FileUtil;
 
 public class DiscreteSample implements Sample {
 	
+	// Minimum values for MAP estimates 
+	public static final double MIN_PHI = 0.000001;
+	public static final double MIN_THETA = 0.000001;
+	
 	public long[][] nw;
 	public long[][] nd;
 	public long[] nwcolsums;
@@ -102,6 +106,57 @@ public class DiscreteSample implements Sample {
 			updateCounts(c.w[i], z[i], c.d[i], 1);
 		}
 	}
+	
+	/**
+	 * Calculate MAP phi
+	 * 
+	 * @param p
+	 * @param enw
+	 */
+	public double[][] mapPhi(LDAParameters p, double[][] phi)
+	{				
+		// Estimate entries
+		for(int t = 0; t < p.T; t++)
+		{
+			double normsum = 0;
+			for(int w = 0; w < p.W; w++)
+			{
+				// Cannot allow negative entries
+				phi[t][w] = Math.max(MIN_PHI, this.nw[w][t] + p.beta[t][w] - 1);
+				normsum += phi[t][w];
+			}
+			// Normalize
+			for(int w = 0; w < p.W; w++)
+				phi[t][w] /= normsum;		
+		}
+		return phi;
+	}
+
+	/**
+	 * Calculate MAP theta
+	 * 
+	 * @param p
+	 * @param end
+	 */
+	public double[][] mapTheta(LDAParameters p, double[][] theta)
+	{
+		// Estimate entries
+		for(int d = 0; d < nd.length; d++)
+		{
+			double normsum = 0;
+			for(int t = 0; t < p.T; t++)
+			{
+				// Cannot allow negative entries
+				theta[d][t] = Math.max(MIN_THETA, nd[d][t] + p.alpha[t] - 1);
+				normsum += theta[d][t];
+			}
+			// Normalize
+			for(int t = 0; t < p.T; t++)
+				theta[d][t] /= normsum;			
+		}
+		return theta;
+	}
+	
 	
 	/**
 	 * Initialize from a *.sample file

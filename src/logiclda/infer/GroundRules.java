@@ -32,15 +32,12 @@ public class GroundRules
 	private int[] unsatCounts;
 	public Random rng;
 	
-	
-	
+		
 	/**
 	 * Each LogicRule has already been initialized with *.applyEvidence()
 	 * 
-	 * @param lstRules
-	 * @param randseed
 	 */
-	public GroundRules(List<GroundableRule> lstRules, int[] z, int randseed)
+	public GroundRules(List<GroundableRule> lstRules, int[] z, Random rng)
 	{
 		// Ground each rule
 		this.rules = lstRules;
@@ -57,7 +54,7 @@ public class GroundRules
 		}
 		
 		// Init random number generator
-		rng = new Random(randseed);
+		this.rng = rng;
 	}
 
 	/**
