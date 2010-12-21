@@ -226,7 +226,8 @@ public class DiscreteSample implements Sample {
 			System.out.println(ioe.toString());
 		}
 	}
-	 
+	 	
+	
 	/**
 	 * Estimate phi/theta and write out to %s.phi/theta   
 	 * 

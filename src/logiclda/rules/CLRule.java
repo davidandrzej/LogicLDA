@@ -1,6 +1,10 @@
 package logiclda.rules;
 
-
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -9,7 +13,7 @@ import logiclda.Corpus;
 import logiclda.infer.Gradient;
 import logiclda.infer.RelaxedSample;
 
-public class CLRule implements LogicRule 
+public class CLRule implements LogicRule, GroundableRule 
 {
 	// The two word types to be Cannot-linked
 	private int wordA;
@@ -26,7 +30,11 @@ public class CLRule implements LogicRule
 	private int[] indices;
 	private double[][] gradient;
 	private int T;
-	
+
+	// below members are only used if rule is grounded as GroundableRule
+	private Map<Integer, Set<Grounding>> invIndex;
+	private Set<Grounding> unsat;
+
 	public CLRule(double sampWeight, double stepWeight,
 			Vector<String> argToks)
 	{
@@ -49,6 +57,12 @@ public class CLRule implements LogicRule
 		this.gradient = null;
 		this.idxA = null;
 		this.idxB = null;
+		
+		// Init yet other members
+		// (will be set by groundRule)
+		// below members are only used if rule is grounded as GroundableRule
+		this.invIndex = null;
+		this.unsat = null;		
 	}
 	
 	public double getRuleWeight()
@@ -171,4 +185,110 @@ public class CLRule implements LogicRule
 		return (int) (numGroundings() - numUnsat);		
 	}
 
+	//
+	// GroundableRule methods
+	//
+
+	/**
+	 * Ensure that evidence has been applied 
+	 */	
+	private void groundCheck(String methodname)
+	{
+		if(this.invIndex == null)
+		{
+			String errmsg = String.format(
+					"ERROR: %s called before grounding rule", 
+					methodname);
+			System.out.println(errmsg);					
+			System.exit(1);		
+		}		
+	}
+	
+	/**
+	 * For this rule, is a particular grounding satisfied?
+	 * 
+	 * @param z
+	 * @param g
+	 * @return
+	 */
+	private boolean groundingSat(int[] z, Grounding g)
+	{
+		int idxa = g.get(0);
+		int idxb = g.get(1);
+		return (z[idxa] != z[idxb]);
+	}
+	
+	public void groundRule(int[] z)
+	{
+		// Must have applied evidence before we can 
+		// generate non-trivial groundings
+		evidenceCheck("groundRule()");
+		
+		// Init data struct
+		this.invIndex = new HashMap<Integer, Set<Grounding>>();
+		this.unsat = new HashSet<Grounding>();
+		
+		for(int idxa : this.idxA)
+			for(int idxb : this.idxB)
+			{
+				// Ensure we have inverted index entries for idxa and idxb
+				if(!this.invIndex.containsKey(idxa))
+					this.invIndex.put(idxa, new HashSet<Grounding>());
+				if(!this.invIndex.containsKey(idxb))
+					this.invIndex.put(idxb, new HashSet<Grounding>());
+				
+				// Add this grounding to each entry
+				Grounding newg = new Grounding(idxa, idxb);								
+				this.invIndex.get(idxa).add(newg);
+				this.invIndex.get(idxb).add(newg);
+					
+				// Initialize unsat
+				if(!groundingSat(z, newg))
+					this.unsat.add(newg);				
+			}
+	}
+	
+	public double evalAssign(int[] z, int idx)
+	{
+		groundCheck("evalAssign()");
+		
+		if(!this.invIndex.containsKey(idx))
+			return 0;
+		
+		double satweight = 0;
+		for(Grounding g : this.invIndex.get(idx))
+		{
+			if(groundingSat(z, g))
+				satweight += this.sampWeight * this.stepWeight;
+		}
+		return satweight;
+	}
+
+	public Map<Integer, Set<Grounding>> getInvIndex()
+	{
+		groundCheck("getInvIndex()");
+		return this.invIndex;
+	}
+		
+	public Set<Grounding> getUnSat()
+	{
+		groundCheck("getUnSat()");
+		return this.unsat;
+	}
+	
+	public void updateUnSat(int[] z, int idx)
+	{	
+		groundCheck("updateUnSat()");
+		
+		if(!this.invIndex.containsKey(idx))
+			return;
+		
+		for(Grounding g : this.invIndex.get(idx))
+		{
+			if(!groundingSat(z,g))			
+				this.unsat.add(g);
+			else
+				this.unsat.remove(g);
+		}
+	}
 }

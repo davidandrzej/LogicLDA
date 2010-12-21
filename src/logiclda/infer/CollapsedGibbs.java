@@ -25,7 +25,6 @@ public class CollapsedGibbs {
 	 * @param c Contains words, documents
 	 * @param p Contains hyperparameters
 	 * @param s Sample object to be updated in place
-	 * @param rng Random number generator for sampling
 	 * @param onlineInit If true, don't pre-subtract counts 
 	 */
 	public static void fixedPhiSample(Corpus c, LDAParameters p, DiscreteSample s,
@@ -64,6 +63,58 @@ public class CollapsedGibbs {
 		}		
 		return;	
 	}
+	
+	
+	/**
+	 * Do a single Logic
+	 * @param logicweights
+	 * @param c
+	 * @param p
+	 * @param s
+	 * @param onlineInit
+	 */
+	public static void groundGibbsSample(double[][] logicweights,
+			Corpus c, LDAParameters p, DiscreteSample s, 
+			boolean onlineInit)            
+	{				
+		int N = c.N;
+		int T = p.T;
+		
+		double[] tmp = new double[T];
+		for(int i = 0; i < N; i++)
+		{
+			// Reset sampling normalization sum to 0
+			double normsum = 0;
+
+			// Remove current assignment from counts
+			// (unless we're doing 'online-style' init)
+			if(!onlineInit)
+			{
+				s.updateCounts(c.w[i], s.z[i], c.d[i], -1);				
+			}
+		
+			// Get un-normalized probabilities for each topic
+			for(int j = 0; j < T; j++)
+			{
+				double num1 = s.nw[c.w[i]][j] + p.beta[j][c.w[i]];
+				double den1 = s.nwcolsums[j] + p.betasums[j];
+				double num2 = s.nd[c.d[i]][j] + p.alpha[j];			
+				if(logicweights[i] != null)
+					tmp[j] = (num1 / den1) * num2 * Math.exp(logicweights[i][j]);
+				else
+					tmp[j] = (num1 / den1) * num2;
+				normsum += tmp[j];
+			}		
+			
+			// Sample the assignment
+			s.z[i] = MiscUtil.multSample(p.rng, tmp, normsum);
+			
+			// Update the count matrices
+			s.updateCounts(c.w[i], s.z[i], c.d[i], 1);			
+		}		
+		return;
+	}
+	
 	
 	/**
 	 * External method for doing online-init, then numsamp Logic Gibbs samples
