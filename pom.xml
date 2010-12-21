@@ -1,0 +1,107 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>logiclda</groupId>
+  <artifactId>logiclda</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>LogicLDA</name>
+  <url>https://github.com/davidandrzej/LogicLDA</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>logiclda.eval.FullEval</mainClass>
+              <addClasspath>true</addClasspath>
+              <packageName>logiclda.eval</packageName>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <mainClass>logiclda.eval.FullEval</mainClass>
+              <packageName>logiclda.eval</packageName>
+            </manifest>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
+
+
+  <repositories>
+
+    <repository>
+      <id>clojars.org</id>
+      <url>http://clojars.org/repo</url>
+    </repository>
+
+    <repository>
+      <id>opennlp.sf.net</id>
+      <url>http://opennlp.sourceforge.net/maven2</url>
+    </repository>
+
+  </repositories>
+
+
+  <dependencies>
+
+    <dependency>
+      <groupId>opennlp</groupId>
+      <artifactId>opennlp-tools</artifactId>
+      <version>1.4.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>ujmp-complete</groupId>
+      <artifactId>ujmp-complete</artifactId>
+      <version>0.2.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-math</artifactId>
+      <version>2.0</version>
+    </dependency>    
+
+  </dependencies>
+</project>
