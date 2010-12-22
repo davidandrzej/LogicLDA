@@ -131,7 +131,8 @@ public class FullEval {
 					Matrix matphi = 
 							FileUtil.readDoubleMatFile(String.format
 									("%s-%d.phi", basefn, ki));
-					phi = matphi.toDoubleArray();	
+					phi = matphi.toDoubleArray();
+					break;
 				default:
 					System.out.println("ERROR: No match for scheme?!");
 					System.exit(1);
