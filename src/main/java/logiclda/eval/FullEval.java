@@ -3,6 +3,8 @@ package logiclda.eval;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ujmp.core.Matrix;
+
 import logiclda.Corpus;
 import logiclda.LDAParameters;
 import logiclda.LogicLDA;
@@ -124,6 +126,12 @@ public class FullEval {
 							numouter, numinner, s); 							
 					phi = relax.phi;					
 					break;
+				case ALC:
+					// Load pre-computed phi directly from file
+					Matrix matphi = 
+							FileUtil.readDoubleMatFile(String.format
+									("%s-%d.phi", basefn, ki));
+					phi = matphi.toDoubleArray();	
 				default:
 					System.out.println("ERROR: No match for scheme?!");
 					System.exit(1);
