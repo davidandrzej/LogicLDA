@@ -27,7 +27,7 @@ import logiclda.infer.DiscreteSample;
  */
 public class LDAMaxWalkSAT {
 
-	
+		
 	public static void main(String [] args)
 	{
 		// Parse command-line args
@@ -58,16 +58,14 @@ public class LDAMaxWalkSAT {
  		
 		// Read in and convert rules
 		//
-		List<LogicRule> rules = LogicLDA.readRules(String.format("%s.rules",basefn));
+		List<LogicRule> rules = 
+			LogicLDA.readRules(String.format("%s.rules",basefn));
 		for(LogicRule lr : rules)
 			lr.applyEvidence(c, p.T);
 				
 		// Do MaxWalkSAT for numiter
-		//
-		List<GroundableRule> grules = new ArrayList<GroundableRule>();
-		for(LogicRule r : rules)
-			grules.add((GroundableRule) r);		
-		doLDAMWS(c, p, grules, numiter, numiter, prand, s);
+		//			
+		LDAMaxWalkSAT.runLDAMWS(c, p, rules, numiter, numiter, prand, s);
 				
 		DiscreteSample finalz = new DiscreteSample(c.N, p.T, p.W, c.D, s.z, c);
 						
@@ -78,6 +76,44 @@ public class LDAMaxWalkSAT {
 		c.writeTopics(basefn, finalz.getPhi(p), Math.min(c.vocab.size(), 10));
 		MirrorDescent md = new MirrorDescent(rules, p.rng);
 		md.satReport(finalz.z, basefn);
+	}
+	
+	/**
+	 * For all zi which are not part of any logic formula,
+	 * simply assign by argmax (phi*theta) 
+	 * 
+	 * @param c
+	 * @param gr
+	 * @param phi
+	 * @param theta
+	 * @param s
+	 * @return
+	 */
+	public static DiscreteSample argmaxZ(Corpus c,  GroundRules gr, 
+			double[][] phi, double[][] theta, DiscreteSample s)	
+	{
+		// Iterate over every position in the corpus
+		for(int i = 0; i < c.N; i++)
+		{
+			// If involved in any logic, skip
+			if(gr.inLogic(i))
+				continue;
+			
+			// Otherwise set to argmax phi*theta
+			double bestval = Double.NEGATIVE_INFINITY;
+			int bestz = -1;
+			
+			for(int t = 0; t < phi.length; t++)
+				if(phi[t][c.w[i]] * theta[c.d[i]][t] > bestval)
+				{
+					bestval = phi[t][c.w[i]] * theta[c.d[i]][t];
+					bestz = t;
+				}
+			
+			s.reassign(c, i, bestz);			
+		}
+		
+		return s;
 	}
 	
 	/**
@@ -92,14 +128,19 @@ public class LDAMaxWalkSAT {
 	 * @param randseed
 	 * @return
 	 */
-	public static DiscreteSample doLDAMWS(Corpus c, 
-			LDAParameters p, List<GroundableRule> lstRules,
+	public static DiscreteSample runLDAMWS(Corpus c, 
+			LDAParameters p, List<LogicRule> lstRules,
 			int numouter, int numinner,
 			double prand, DiscreteSample s)
 	{		
+		// Apply evidence
+		for(LogicRule gr : lstRules)
+			gr.applyEvidence(c, p.T);
+		
 		// Init data structures
 		//
-		GroundRules gr = new GroundRules(lstRules, s.z, p.rng);
+		GroundRules gr = 
+			new GroundRules(GroundRules.groundCast(lstRules), s.z, p.rng);
 		
 		double[] randvsgreedy = new double[2];
 		randvsgreedy[0] = prand;
@@ -111,6 +152,8 @@ public class LDAMaxWalkSAT {
 		
 		for(int i = 0; i < numouter; i++)
 		{
+			System.out.println(String.format("LDA-MWS outer %d of %d",
+					i, numouter));			
 			//
 			// OUTER LOOP
 			// Estimate MAP phi/theta
@@ -118,15 +161,15 @@ public class LDAMaxWalkSAT {
 			phi = s.mapPhi(p, phi);
 			theta = s.mapTheta(p, theta);
 			
+			// Argmax non-logic Z
+			s = LDAMaxWalkSAT.argmaxZ(c, gr, phi, theta, s);
+			
 			for(int j = 0; j < numinner; j++)
 			{
 				//
 				// INNER LOOP
 				// Optimize Z with LDA-MaxWalkSAT
-				//
-										
-				// TODO: Optimize the non-logic z with argmax
-				
+				//														
 				// Sample an unsatisfied clause 
 				Grounding g = gr.randomUnsat();
 			
@@ -151,9 +194,7 @@ public class LDAMaxWalkSAT {
 				}	
 			
 				// Take the step
-				s.updateCounts(c.w[idx], s.z[idx], c.d[idx], -1);				
-				s.z[idx] = newz;
-				s.updateCounts(c.w[idx], s.z[idx], c.d[idx], 1);				
+				s.reassign(c, idx, newz);				
 				
 				// Update ground rule satisfaction
 				gr.updateUnsat(s.z, idx);

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -27,6 +28,9 @@ public class DocRule implements IndependentRule {
 	private int[] indices;
 	private double[][] gradient;
 	
+	// below members are only used if rule is grounded as GroundableRule
+	private Map<Integer, Set<Grounding>> invIndex;
+	private Set<Grounding> unsat;
 	
 	/**
 	 * If doc has label, then z-label words in doc
@@ -57,6 +61,12 @@ public class DocRule implements IndependentRule {
 		// Init groundings to null (will be set later by applyEvidence)
 		this.indices = new int[1];
 		this.groundings = null;			
+		
+		// Init yet other members
+		// (will be set by groundRule)
+		// below members are only used if rule is grounded as GroundableRule
+		this.invIndex = null;
+		this.unsat = null;
 	}
 	
 	@Override
@@ -174,4 +184,106 @@ public class DocRule implements IndependentRule {
 		return sat;		
 	}
 
+	//
+	// GroundableRule methods
+	//
+
+	/**
+	 * Ensure that evidence has been applied 
+	 */	
+	private void groundCheck(String methodname)
+	{
+		if(this.invIndex == null)
+		{
+			String errmsg = String.format(
+					"ERROR: %s called before grounding rule", 
+					methodname);
+			System.out.println(errmsg);					
+			System.exit(1);		
+		}		
+	}
+	
+	/**
+	 * For this rule, is a particular grounding satisfied?
+	 * 
+	 * @param z
+	 * @param g
+	 * @return
+	 */
+	private boolean groundingSat(int[] z, Grounding g)
+	{
+		return(this.hashSeedTopics.contains(z[g.get(0)]));		
+	}
+	
+	public void groundRule(int[] z)
+	{
+		// Must have applied evidence before we can 
+		// generate non-trivial groundings
+		evidenceCheck("groundRule()");
+		
+		// Init data struct
+		this.invIndex = new HashMap<Integer, Set<Grounding>>();
+		this.unsat = new HashSet<Grounding>();
+		
+		for(int idxa : this.groundings)
+		{
+			// Ensure we have inverted index entries for idxa			
+			if(!this.invIndex.containsKey(idxa))
+				this.invIndex.put(idxa, new HashSet<Grounding>());				
+			
+			// Add this grounding to each entry
+			Grounding newg = new Grounding(idxa);
+			this.invIndex.get(idxa).add(newg);
+				
+			// Initialize unsat
+			if(!groundingSat(z, newg))
+				this.unsat.add(newg);				
+		}
+	}
+	
+	public double evalAssign(int[] z, int idx)
+	{
+		groundCheck("evalAssign()");
+		
+		if(!this.invIndex.containsKey(idx))
+			return 0;
+		
+		double satweight = 0;
+		for(Grounding g : this.invIndex.get(idx))
+		{
+			if(groundingSat(z, g))
+				satweight += this.sampWeight * this.stepWeight;
+		}
+		return satweight;
+	}
+
+	public Map<Integer, Set<Grounding>> getInvIndex()
+	{
+		groundCheck("getInvIndex()");
+		return this.invIndex;
+	}
+		
+	public Set<Grounding> getUnSat()
+	{
+		groundCheck("getUnSat()");
+		return this.unsat;
+	}
+	
+	public void updateUnSat(int[] z, int idx)
+	{			
+		groundCheck("updateUnSat()");
+		
+		if(!this.invIndex.containsKey(idx))
+			return;
+		
+		for(Grounding g : this.invIndex.get(idx))
+		{
+			if(!groundingSat(z,g))			
+				this.unsat.add(g);
+			else
+				this.unsat.remove(g);
+		}
+	}
+
+	
 }

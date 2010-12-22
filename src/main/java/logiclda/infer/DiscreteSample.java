@@ -107,6 +107,20 @@ public class DiscreteSample implements Sample {
 		}
 	}
 	
+	/** 
+	 * Do bookkeeping assoc with reassigning z[idx] to newz
+	 * @param c
+	 * @param idx
+	 * @param newz
+	 */
+	public void reassign(Corpus c, int idx, int newz)
+	{
+		this.updateCounts(c.w[idx], this.z[idx], c.d[idx], -1);
+		this.z[idx] = newz;				
+		this.updateCounts(c.w[idx], this.z[idx], c.d[idx], 1);	
+	}
+	
+	
 	/**
 	 * Calculate MAP phi
 	 * 

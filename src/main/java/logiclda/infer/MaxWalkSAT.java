@@ -56,21 +56,13 @@ public class MaxWalkSAT {
 		//
 		DiscreteSample s = StandardLDA.runStandardLDA(c, p, numsamp);
  		
-		// Read in and convert rules
-		//
+		// Load rules
 		List<LogicRule> rules = LogicLDA.readRules(String.format("%s.rules",basefn));
-		for(LogicRule lr : rules)
-			lr.applyEvidence(c, p.T);
-				
-		// Do MaxWalkSAT for numiter
-		//
-		List<GroundableRule> grules = new ArrayList<GroundableRule>();
-		for(LogicRule r : rules)
-			grules.add((GroundableRule) r);		
-		doMWS(grules, p, numiter, prand, s);
 		
-		DiscreteSample finalz = new DiscreteSample(c.N, p.T, p.W, c.D, s.z, c);
-						
+		// Run MaxWalkSAT for numiter
+		//
+		DiscreteSample finalz = runMWS(c, p, s, rules, prand, numiter);
+										
 		// Write out results
 		//
 		finalz.writePhiTheta(p, basefn);
@@ -78,6 +70,23 @@ public class MaxWalkSAT {
 		c.writeTopics(basefn, finalz.getPhi(p), Math.min(c.vocab.size(), 10));
 		MirrorDescent md = new MirrorDescent(rules, p.rng);
 		md.satReport(finalz.z, basefn);
+	}
+	
+	public static DiscreteSample runMWS(Corpus c, LDAParameters p, DiscreteSample s, 
+			List<LogicRule> rules, double prand, int numiter)
+	{
+		// Convert rules
+		//
+		// -apply evidence
+		for(LogicRule lr : rules)
+			lr.applyEvidence(c, p.T);
+		// -ground rules
+		List<GroundableRule> grules = new ArrayList<GroundableRule>();
+		for(LogicRule r : rules)
+			grules.add((GroundableRule) r);		
+		
+		// Do numiter MWS steps and return sample
+		return doMWS(c, grules, p, numiter, prand, s);
 	}
 	
 	/**
@@ -92,7 +101,8 @@ public class MaxWalkSAT {
 	 * @param randseed
 	 * @return
 	 */
-	public static DiscreteSample doMWS(List<GroundableRule> lstRules,
+	public static DiscreteSample doMWS(Corpus c,
+			List<GroundableRule> lstRules,
 			LDAParameters p,
 			int numiter, 
 			double prand, DiscreteSample s)
@@ -141,7 +151,9 @@ public class MaxWalkSAT {
 			}	
 			
 			// Take the step
-			s.z[idx] = newz;				
+			s.reassign(c, idx, newz);
+			
+			// Update ground clause satisfaction
 			gr.updateUnsat(s.z, idx);
 		}				
 		return s;

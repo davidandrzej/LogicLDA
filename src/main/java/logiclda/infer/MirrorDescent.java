@@ -44,6 +44,28 @@ public class MirrorDescent
 	}
 
 	/**
+	 * Calc total satisfied weight over all rules
+	 * 
+	 * @param z
+	 * @return
+	 */
+	public double satWeight(int[] z)
+	{
+		double weight = 0;
+		for(LogicRule lr : this.rules)
+			weight += lr.getRuleWeight() * lr.numSat(z);
+		return weight;
+	}
+	
+	public double totalWeight()
+	{
+		double total = 0;
+		for(LogicRule lr : this.rules)
+			total += lr.getRuleWeight() * lr.numGroundings();
+		return total;
+	}
+	
+	/**
 	 * Get the z-label style weights for all IndependentRule 
 	 * (for use in Logic Collapsed Gibbs, etc)
 	 *  
@@ -139,6 +161,29 @@ public class MirrorDescent
 		}
 		return retval;
 	}	
+	
+	public static RelaxedSample runSGD(Corpus c, LDAParameters p, 
+			List<LogicRule> rules, int numouter, 
+			int numinner, DiscreteSample s)
+	{
+		// Apply evidence
+		for(LogicRule lr : rules)
+			lr.applyEvidence(c, p.T);
+		
+		// Init rule set
+		MirrorDescent rs = new MirrorDescent(rules, p.rng);
+		
+		// Init relaxed z-sample 
+		RelaxedSample relax = new RelaxedSample(c, p, s);						
+						
+		// Do LogicLDA MAP inference via Stochastic Gradient Descent				
+		double stepa = Math.sqrt(numinner);
+		double stepb = (double) numinner;
+		relax = rs.doSGD(c, p, relax, numouter, numinner, stepa, stepb);
+		
+		// Return final RelaxedSample
+		return relax;
+	}
 	
 	 /**
 	  * Do stochastic gradient descent MAP inference

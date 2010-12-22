@@ -28,10 +28,24 @@ import org.ujmp.core.MatrixFactory;
  */
 public class GroundRules 
 {
+	private Set<Integer> logicidx;
 	private List<GroundableRule> rules;
 	private int[] unsatCounts;
 	public Random rng;
 	
+	/**
+	 * Cast List of LogicRule to GroundableRule
+	 * 
+	 * @param rules
+	 * @return
+	 */
+	public static List<GroundableRule> groundCast(List<LogicRule> rules)
+	{
+		ArrayList<GroundableRule> retval = new ArrayList<GroundableRule>();
+		for(LogicRule lr : rules)
+			retval.add((GroundableRule) lr);
+		return retval;
+	}
 		
 	/**
 	 * Each LogicRule has already been initialized with *.applyEvidence()
@@ -53,10 +67,25 @@ public class GroundRules
 			idx++;
 		}
 		
+		// Construct Set of all logic-involved idx
+		this.logicidx = new HashSet<Integer>();
+		for(GroundableRule r : this.rules)		
+			this.logicidx.addAll(r.getInvIndex().keySet());		
+			
 		// Init random number generator
 		this.rng = rng;
 	}
 
+	/**
+	 * Is this index invovled in any logic fcn?
+	 * @param idx
+	 * @return
+	 */
+	public boolean inLogic(int idx)
+	{
+		return this.logicidx.contains(idx);
+	}
+	
 	/**
 	 * After an update of z at position idx, update unsat ground clause
 	 * @param z

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logiclda.rules.GroundableRule;
+import logiclda.rules.LogicRule;
 import logiclda.infer.GroundRules;
 import logiclda.Corpus;
 import logiclda.LDAParameters;
@@ -65,6 +66,28 @@ public class CollapsedGibbs {
 			s.updateCounts(c.w[i], s.z[i], c.d[i], 1);			
 		}		
 		return;	
+	}
+	
+	public static DiscreteSample runGroundGibbs(Corpus c, LDAParameters p, 
+			DiscreteSample s, List<LogicRule> rules, int numsamp)
+	{
+		// Cast LogicRule to GroundableRule
+		List<GroundableRule> grules = GroundRules.groundCast(rules);
+		
+		// Apply evidence
+		for(GroundableRule gr : grules)
+			gr.applyEvidence(c, p.T);
+		// Ground the Logic Rules
+		GroundRules gr = new GroundRules(grules, s.z, p.rng);
+		
+		// Do the samples
+		for(int si = 0; si < numsamp; si++)
+		{
+			System.out.println(String.format("Sample %d of %d", si, numsamp));
+			CollapsedGibbs.groundGibbsSample(gr, c, p, s, false);
+		}
+		
+		return s;
 	}
 	
 	/**
@@ -137,12 +160,16 @@ public class CollapsedGibbs {
 				double num1 = s.nw[c.w[i]][j] + p.beta[j][c.w[i]];
 				double den1 = s.nwcolsums[j] + p.betasums[j];
 				double num2 = s.nd[c.d[i]][j] + p.alpha[j];			
+								
+				tmp[j] = (num1 / den1) * num2;
 				
-				// Multiply the standard Collapsed Gibbs term 
-				// by the exp of the logic contribution
-				s.z[i] = j;
-				tmp[j] = (num1 / den1) * num2; 
-				tmp[j] *= Math.exp(gr.evalAssign(s.z, i));
+				// If applicable, multiply the standard Collapsed Gibbs term 
+				// by the exp of the logic contribution				
+				if(gr.inLogic(i))
+				{
+					s.z[i] = j;
+					tmp[j] *= Math.exp(gr.evalAssign(s.z, i));
+				}					
 								
 				normsum += tmp[j];
 			}		
