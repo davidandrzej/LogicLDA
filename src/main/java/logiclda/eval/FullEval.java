@@ -91,7 +91,7 @@ public class FullEval {
 					rules = 
 						LogicLDA.readRules(String.format("%s.rules",basefn));
 					// Run MaxWalkSAT for numouter steps
-					s = MaxWalkSAT.runMWS(train, p, s, rules, PRAND, numouter);
+					s = MaxWalkSAT.runMWS(train, p, s, rules, PRAND, numinner*numouter);
 					phi = new double[p.T][train.W];
 					phi = s.mapPhi(p, phi);
 					break;

@@ -17,6 +17,7 @@ public class GroundGibbs
 	 */
 	public static void main(String[] args) 
 	{
+			long tic = System.currentTimeMillis();
 			// Parse command-line args
 			//
 			String basefn = args[0];
@@ -60,6 +61,11 @@ public class GroundGibbs
 					Math.min(c.vocab.size(), 10));
 			MirrorDescent md = new MirrorDescent(rules, p.rng);
 			md.satReport(finalz.z, basefn);
+			
+			long toc = System.currentTimeMillis();
+			
+			System.out.println(String.format("\n%f seconds elapsed\n", 
+					((float) toc-tic)/1000));
 		}
 	}
 
