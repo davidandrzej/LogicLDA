@@ -19,8 +19,8 @@ import logiclda.textutil.FileUtil;
 public class DiscreteSample implements Sample {
 	
 	// Minimum values for MAP estimates 
-	public static final double MIN_PHI = 0.000001;
-	public static final double MIN_THETA = 0.000001;
+	public static final double MIN_PHI = 0.001;
+	public static final double MIN_THETA = 0.001;
 	
 	public long[][] nw;
 	public long[][] nd;
