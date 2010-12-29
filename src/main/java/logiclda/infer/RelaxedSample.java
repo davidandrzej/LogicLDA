@@ -17,8 +17,8 @@ import logiclda.textutil.FileUtil;
 public class RelaxedSample implements Sample
 {
 	// MAP estimates should really have 
-	public static final double MIN_PHI = 0.000001;
-	public static final double MIN_THETA = 0.000001;
+	public static final double MIN_PHI = 0.001;
+	public static final double MIN_THETA = 0.001;
 	
 	public double[][] zrelax;
 	public double[][] phi;
