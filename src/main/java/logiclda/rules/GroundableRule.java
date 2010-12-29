@@ -37,7 +37,7 @@ public interface GroundableRule extends LogicRule
 	public Map<Integer, Set<Grounding>> getInvIndex();
 	
 	/**
-	 * Return a List of all currently unsatisifed groundingsç
+	 * Return a List of all currently unsatisifed groundings
 	 * @return
 	 */
 	public Set<Grounding> getUnSat();
