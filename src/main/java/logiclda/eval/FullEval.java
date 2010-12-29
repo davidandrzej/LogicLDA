@@ -147,6 +147,11 @@ public class FullEval {
 				outlines.add(String.format("%f\t%f\t%f", genResults[ki][0], 
 						genResults[ki][1],
 						testrules.totalWeight()));
+				
+				// Write out topics
+				test.writeTopics(String.format("%s-%s-%d", 
+						basefn, scheme.toString(), ki),  						
+						phi, Math.min(10, test.vocab.size()));
 			}
 			
 			// Write out results to file			

@@ -100,6 +100,12 @@ public class Corpus {
 		}
 	}
 		
+	
+	public void writeTopics(String basefn, Matrix matphi, int topN)
+	{		
+		writeTopics(basefn, matphi.toDoubleArray(), topN);
+	}
+	
 	/**
 	 * Write out top N most probable words for each topic
 	 * 
@@ -107,16 +113,15 @@ public class Corpus {
 	 * @param phi
 	 * @param topN
 	 */
-	public void writeTopics(String basefn, Matrix matphi, int topN)
+	public void writeTopics(String basefn, double[][] phi, int topN)
 	{
 		try
 		{
 			
 			FileWriter out = new FileWriter(String.format("%s.topics", basefn));
 			
-			int T = (int) matphi.getSize(0);
-			int W = (int) matphi.getSize(1);
-			double[][] phi = matphi.toDoubleArray();
+			int T = phi.length;
+			int W = phi[0].length;
 			
 			// Indices to be used for printing out Top N words
 			Integer[] idx = new Integer[W];
