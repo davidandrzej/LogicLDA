@@ -100,6 +100,59 @@ public class Corpus {
 		}
 	}
 		
+	/**
+	 * Concatenate this corpus with another, destructive to this Corpus
+	 * 
+	 * @param other
+	 * @return
+	 */
+	public Corpus concatCorpus(Corpus other)
+	{
+		// Double-check vocab match
+		assert(this.vocab.size() == other.vocab.size() &&
+				this.vocab.get(0).equals(other.vocab.get(0)));
+		
+		// Concatenate corpus (need to adjust document indices) 		
+		this.w = MiscUtil.intArrayConcat(this.w, other.w);						
+		this.d = MiscUtil.intArrayConcat(this.d, other.d);
+		for(int i = this.N; i < this.w.length; i++)
+			this.d[i] += this.D;
+		for(String doc : other.doclist)
+			this.doclist.add(doc);		
+		
+		// Adjust corpus length and document counts
+		// (vocab size should be unchanged)
+		this.N = this.w.length;
+		this.D = this.doclist.size();
+				
+		// Side information
+		for(Map.Entry<String, Object> keyval : other.sideInfo.entrySet())
+		{
+			// Sentence indices
+			if(keyval.getKey().equals("sent"))
+			{				
+				int[] senta = (int[]) this.sideInfo.get("sent");
+				int[] sentb = (int[]) other.sideInfo.get("sent");				
+				int[] newsent = MiscUtil.intArrayConcat(senta, sentb);
+						
+				// need to adjust sent indices
+				for(int i = senta.length; i < senta.length + sentb.length; i++)
+					newsent[i] += senta[senta.length - 1] + 1;	
+				
+				this.sideInfo.put("sent", newsent);
+			}
+			// Document labels
+			else if(keyval.getKey().equals("doclabel"))
+			{
+				this.sideInfo.put("doclabel", 
+						MiscUtil.intArrayConcat((int[]) this.sideInfo.get("doclabel"), 
+								(int[]) other.sideInfo.get("doclabel")));	
+				
+			}							
+		}
+		
+		return this;				
+	}
 	
 	public void writeTopics(String basefn, Matrix matphi, int topN)
 	{		

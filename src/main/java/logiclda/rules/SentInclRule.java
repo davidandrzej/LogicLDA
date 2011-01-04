@@ -210,6 +210,12 @@ public class SentInclRule implements LogicRule
 		return (int) (numGroundings() - numUnsat); 				
 	}
 
+	//
+	// TODO: Implement GroundableRule so we can try all runs
+	//
+	
+	
+	
 }
 
 

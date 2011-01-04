@@ -45,6 +45,21 @@ public class MiscUtil {
 	}
 	
 	/**
+	 * Return a new int[] which is the concatenation of a and b 
+	 * 
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public static int[] intArrayConcat(int[] a, int[] b)
+	{
+		int[] retval = new int[a.length + b.length];
+		System.arraycopy(a, 0, retval, 0, a.length);
+		System.arraycopy(b, 0, retval, a.length, b.length);
+		return retval;		
+	}
+	
+	/**
 	 * Simple conversion of List<Integer> to int[]
 	 *  
 	 * @param vec
