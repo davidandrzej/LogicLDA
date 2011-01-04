@@ -147,18 +147,24 @@ public class MirrorDescent
 	}
 	
 	/**
-	 * Nice summary of rule set
+	 * Nice summary of rule set and nontrivial groundings
 	 */
 	public String toString()
 	{
+		int totalground = 0;
 		String retval = "";
 		retval += String.format("%d rules\n-------\n\n", rules.length);
 		for(LogicRule lr : rules)
 		{
 			retval += lr.toString();
 			retval += String.format("%d groundings (weight = %.1f)\n\n",
-					lr.numGroundings(), lr.getTotalSamplingWeight());								
+					lr.numGroundings(), lr.getTotalSamplingWeight());
+			totalground += lr.numGroundings();
 		}
+		
+		retval += String.format("Total number of nontrivial groundings = %d\n",
+				totalground);
+		
 		return retval;
 	}	
 	

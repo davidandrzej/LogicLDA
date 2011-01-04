@@ -1,5 +1,6 @@
 package logiclda.eval;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,53 @@ public class FullEval {
 		// Parse command-line args
 		//
 		String basefn = args[0];
+		
+		// If fewer args, simply output logic grounding report and quit
+		if(args.length < 7)
+		{
+			try{							
+				// Output logic grounding report for Corpus subsamples
+				// 
+				LDAParameters p = new LDAParameters(basefn, 194582);
+
+				// How many Corpus subsets?
+				int k = Integer.parseInt(args[1]);
+				CrossFold cf = new CrossFold(new Corpus(basefn), k);
+
+				// Initialize corpus and rule set								
+				int ki = 0;
+				System.out.println(
+						String.format(
+								"Analyzing groundings for fold %d of %d", 
+								ki, k));
+				
+				Corpus c = cf.getTest(ki);			
+				MirrorDescent rs = LogicLDA.constructRuleSet(basefn, c, 
+						p.T, p.randseed, false);				
+				FileUtil.fileSpit(String.format("%s-%d.groundings", basefn, ki+1), 
+						rs.toString());
+
+				// Iterate over the subsets
+				for(ki = 1; ki < k; ki++)
+				{
+					System.out.println(
+							String.format(
+									"Analyzing groundings for fold %d of %d", 
+									ki, k));
+					
+					c.concatCorpus(cf.getTest(ki));
+					rs = LogicLDA.constructRuleSet(basefn, c, p.T, p.randseed, false);
+					FileUtil.fileSpit(String.format("%s-%d.groundings", basefn, ki+1), 
+							rs.toString());
+				}
+			}
+			catch(IOException ioe)
+			{
+				ioe.printStackTrace();
+			}
+			System.exit(0);
+		}
+		
 		InferScheme scheme = InferScheme.valueOf(args[1]);		
 		int numsamp = Integer.parseInt(args[2]);
 		int numouter= Integer.parseInt(args[3]); 
