@@ -58,6 +58,16 @@ public class FullEval {
 								"Analyzing groundings for fold %d of %d", 
 								ki, k));
 				
+				if(k == 1)
+				{
+					Corpus c = new Corpus(basefn);
+					MirrorDescent rs = LogicLDA.constructRuleSet(basefn, c, 
+							p.T, p.randseed, false);
+					FileUtil.fileSpit(String.format("%s-ALL.groundings", basefn),
+							rs.toString());
+					System.exit(0);
+				}
+									
 				Corpus c = cf.getTest(ki);			
 				MirrorDescent rs = LogicLDA.constructRuleSet(basefn, c, 
 						p.T, p.randseed, false);				
