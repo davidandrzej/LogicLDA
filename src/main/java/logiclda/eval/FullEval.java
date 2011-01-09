@@ -108,7 +108,8 @@ public class FullEval {
 			// -1st col is E[LDA] over MC estimation samples
 			// -2nd col is E[Logic] over MC estimation samples 
 			double[][] genResults = new double[k][2];
-			ArrayList<String> outlines = new ArrayList<String>();
+			ArrayList<String> testlines = new ArrayList<String>();
+			ArrayList<String> trainlines = new ArrayList<String>();
 			
 			// Load corpus and parameters (checking vocab dim agreement)
 			LDAParameters p = new LDAParameters(basefn, randseed);
@@ -181,7 +182,9 @@ public class FullEval {
 						LogicLDA.readRules(String.format("%s.rules",basefn));				
 					// Run LDAMaxWalkSAT
 					RelaxedSample relax = MirrorDescent.runSGD(train, p, rules, 
-							numouter, numinner, s); 							
+							numouter, numinner, s);
+					s = new DiscreteSample(train.N, p.T, train.W, train.D, 
+							relax.getZ(), train);					
 					phi = relax.phi;					
 					break;
 				case ALC:
@@ -189,6 +192,17 @@ public class FullEval {
 					Matrix matphi = 
 							FileUtil.readDoubleMatFile(String.format
 									("%s-%d.phi", basefn, ki));
+					List<Integer> alclist = FileUtil.readIntFile(
+							String.format("%s-%d.alcsample", basefn, ki));
+					int[] alcsample = new int[alclist.size()];
+					int i = 0;
+					for(Integer zi : alclist)
+					{
+						alcsample[i] = zi;
+						i++;
+					}
+					s = new DiscreteSample(train.N, p.T, train.W, train.D, 
+							alcsample, train);
 					phi = matphi.toDoubleArray();
 					break;
 				default:
@@ -202,9 +216,20 @@ public class FullEval {
 				
 				// Save numerical values and generate output line
 				genResults[ki] = estimateObjectives(test, p, testrules, phi);
-				outlines.add(String.format("%f\t%f\t%f", genResults[ki][0], 
+				testlines.add(String.format("%f\t%f\t%f", genResults[ki][0], 
 						genResults[ki][1],
 						testrules.totalWeight()));
+				
+				// Do the same for trainset objective
+				double trainlda = EvalLDA.ldaLoglike(s.nw, s.nd, phi, 
+							s.mapTheta(p, new double[train.D][p.T]),
+							p.beta, p.alpha);
+				MirrorDescent trainrules =
+					LogicLDA.constructRuleSet(basefn, train, p.T, 
+							p.randseed, false);
+				double trainlogic = trainrules.satWeight(s.z);
+				trainlines.add(String.format("%f\t%f\t%f", trainlda, 
+						trainlogic, trainrules.totalWeight()));
 				
 				// Write out topics
 				test.writeTopics(String.format("%s-%s-%d", 
@@ -212,8 +237,10 @@ public class FullEval {
 						phi, Math.min(10, test.vocab.size()));
 			}
 			
-			// Write out results to file			
-			FileUtil.writeLines(outlines, String.format("%s-%s.cfv", basefn, 
+			// Write out results to files						
+			FileUtil.writeLines(testlines, String.format("%s-%s.cfv", basefn, 
+					scheme.toString()));			
+			FileUtil.writeLines(trainlines, String.format("%s-%s.traincfv", basefn, 
 					scheme.toString()));
 		}										
 		catch (Exception e)
