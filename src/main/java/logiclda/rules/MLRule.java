@@ -2,6 +2,7 @@ package logiclda.rules;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.Random;
@@ -34,6 +35,8 @@ public class MLRule implements GroundableRule
 	// below members are only used if rule is grounded as GroundableRule
 	private Map<Integer, Set<Grounding>> invIndex;
 	private Set<Grounding> unsat;
+	
+	private Set<Grounding> topicDupe;
 	
 	public MLRule(double sampWeight, double stepWeight,
 			Vector<String> argToks)
@@ -271,6 +274,24 @@ public class MLRule implements GroundableRule
 				if(!groundingSat(z, newg))
 					this.unsat.add(newg);				
 			}
+	}
+	
+	public void groundPenalty(int T)
+	{
+		groundCheck("groundPenalty()");
+		
+		// This will contain T copies of each grounding
+		// (one per topic)
+		topicDupe = new HashSet<Grounding>();
+		
+		// Get the first values element
+		Iterator<Set<Grounding>> iterGround = 
+			this.invIndex.values().iterator();
+		Set<Grounding> allGround = iterGround.next();
+		
+		for(Grounding g : allGround)		
+			for(int ti = 0; ti < T; ti++)			
+				topicDupe.add(new Grounding(g.values[0], g.values[1], ti));
 	}
 	
 	public double evalAssign(int[] z, int idx)

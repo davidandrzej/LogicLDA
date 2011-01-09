@@ -1,5 +1,6 @@
 package logiclda.rules;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +36,8 @@ public class CLRule implements LogicRule, GroundableRule
 	private Map<Integer, Set<Grounding>> invIndex;
 	private Set<Grounding> unsat;
 
+	private Set<Grounding> topicDupe;
+	
 	public CLRule(double sampWeight, double stepWeight,
 			Vector<String> argToks)
 	{
@@ -247,6 +250,20 @@ public class CLRule implements LogicRule, GroundableRule
 					this.unsat.add(newg);				
 			}
 	}
+
+	public void groundPenalty(int T)
+	{
+		groundCheck("groundPenalty()");
+		
+		// This will contain T copies of each grounding
+		// (one per topic)
+		topicDupe = new HashSet<Grounding>();
+		
+		for(Set<Grounding> gset : this.invIndex.values())
+			for(Grounding g : gset)
+				for(int ti = 0; ti < T; ti++)			
+					topicDupe.add(new Grounding(g.values[0], g.values[1], ti));						
+	}
 	
 	public double evalAssign(int[] z, int idx)
 	{
@@ -279,6 +296,9 @@ public class CLRule implements LogicRule, GroundableRule
 	public void updateUnSat(int[] z, int idx)
 	{	
 		groundCheck("updateUnSat()");
+		
+		System.out.println(String.format("dupesize=%d", 
+				this.topicDupe.size()));
 		
 		if(!this.invIndex.containsKey(idx))
 			return;

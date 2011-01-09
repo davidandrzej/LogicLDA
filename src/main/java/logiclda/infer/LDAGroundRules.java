@@ -17,9 +17,10 @@ public class LDAGroundRules extends GroundRules
 	 * Each LogicRule has already been initialized with *.applyEvidence()
 	 * 
 	 */
-	public LDAGroundRules(List<GroundableRule> lstRules, int[] z, Random rng)
+	public LDAGroundRules(List<GroundableRule> lstRules, int[] z, 
+			Random rng, int T)
 	{
-		super(lstRules, z, rng);
+		super(lstRules, z, rng, T);
 	}
 	
 	/**

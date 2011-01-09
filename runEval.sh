@@ -10,6 +10,6 @@ NUMINNER=100000
 RANDSEED=194582
 
 JARPATH=$HOME/code/LogicLDA/target/logiclda-0.0.1-SNAPSHOT-jar-with-dependencies.jar
-BASEDIR=$HOME/projects/logic-grid
+BASEDIR=$HOME/projects/ULT-logic-grid
 
 java -Xmx6g -jar $JARPATH $BASEDIR/$BASEFN/$BASEFN $SCHEME $NUMSAMP $NUMOUTER $NUMINNER $RANDSEED $KFOLD

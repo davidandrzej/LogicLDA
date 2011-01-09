@@ -34,13 +34,15 @@ public class RelaxedSample implements Sample
 		
 		// Init z-relax as posterior given phi/theta
 		for(int i = 0; i < s.z.length; i++)
-		{
+		{			
 			double normsum = 0;
 			for(int t = 0; t < p.T; t++)
 			{
 				zrelax[i][t] = theta[c.d[i]][t] * phi[t][c.w[i]];
+				assert(!Double.isNaN(zrelax[i][t]));
 				normsum += zrelax[i][t]; 
 			}
+			assert(normsum > 0);
 			for(int t = 0; t < p.T; t++)
 				zrelax[i][t] /= normsum;						
 		}		
@@ -88,13 +90,14 @@ public class RelaxedSample implements Sample
 			// Get true index and gradient
 			int i = stepGrad.indices[gi];
 			double[] curGrad = stepGrad.gradients[gi];
-			// Exponentiate entries w/ non-zero gradients
+			// Multiply entries w/ non-zero gradients
 			for(int t = 0; t < curGrad.length; t++)
 				zrelax[i][t] *= Math.exp(stepSize * curGrad[t]);
 			// Re-normalize
 			double normsum = 0;
 			for(double val : zrelax[i])
 				normsum += val;
+			assert(normsum > 0);
 			for(int t = 0; t < curGrad.length; t++)
 				zrelax[i][t] /= normsum;
 		}
