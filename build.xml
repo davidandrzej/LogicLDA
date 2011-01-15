@@ -148,13 +148,13 @@
     </target>
     <target name="getvocab">
         <java classname="logiclda.textutil.TextReader" failonerror="true" fork="yes">
-            <arg line="getvocab /home/andrzejewski1/projects/nyt-full/nyt.doclist /home/andrzejewski1/data/news.stop 100 /home/andrzejewski1/projects/nyt-full/nyt"/>
+            <arg line="getvocab ${BASEFN}.doclist ${STOPFN} ${VTHRESH} ${BASEFN}"/>
             <classpath refid="LogicLDA.classpath"/>
         </java>
     </target>
     <target name="makecorpus">
         <java classname="logiclda.textutil.TextReader" failonerror="true" fork="yes">
-            <arg line="makecorpus /home/andrzejewski1/projects/nyt-full/nyt.doclist /home/andrzejewski1/projects/nyt-full/nyt.vocab /home/andrzejewski1/projects/nyt-full/nyt"/>
+            <arg line="makecorpus ${BASEFN}.doclist ${BASEFN}.vocab ${BASEFN}"/>
             <classpath refid="LogicLDA.classpath"/>
         </java>
     </target>
