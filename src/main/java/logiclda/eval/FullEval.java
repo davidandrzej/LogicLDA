@@ -104,10 +104,10 @@ public class FullEval {
 				
 		try 
 		{
-			// Each row corresponds to one fold
+			// Build up report results as List of Strings 
 			// -1st col is E[LDA] over MC estimation samples
-			// -2nd col is E[Logic] over MC estimation samples 
-			double[][] genResults = new double[k][2];
+			// -2nd col is E[Logic] over MC estimation samples
+			// -3rd col is total possible Logic weight
 			ArrayList<String> testlines = new ArrayList<String>();
 			ArrayList<String> trainlines = new ArrayList<String>();
 			
@@ -214,10 +214,11 @@ public class FullEval {
 				MirrorDescent testrules = 
 					LogicLDA.constructRuleSet(basefn, test, p.T, p.randseed, false);
 				
-				// Save numerical values and generate output line
-				genResults[ki] = estimateObjectives(test, p, testrules, phi);
-				testlines.add(String.format("%f\t%f\t%f", genResults[ki][0], 
-						genResults[ki][1],
+				// Save numerical values and generate output line				
+				GeneralizationResult genResult = estimateObjectives(test, p, testrules, phi);
+				testlines.add(String.format("%f\t%f\t%f", 
+						genResult.getLdaobj(),
+						genResult.getLogicobj(),						
 						testrules.totalWeight()));
 				
 				// Do the same for trainset objective
@@ -235,6 +236,10 @@ public class FullEval {
 				test.writeTopics(String.format("%s-%s-%d", 
 						basefn, scheme.toString(), ki),  						
 						phi, Math.min(10, test.vocab.size()));
+				// Write out detailed sat report
+				FileUtil.fileSpit(String.format("%s-%s-%d.sat", basefn, 
+						scheme.toString(), ki),
+					testrules.satReport(genResult.getFinalSample()));											
 			}
 			
 			// Write out results to files						
@@ -273,15 +278,19 @@ public class FullEval {
 	 * Given a fixed phi, estimate expectations of LDA and Logic objectives 
 	 * on test documents using Collapsed Gibbs sampling
 	 * 
+	 * 
 	 * @param test
 	 * @param p
 	 * @param rules
 	 * @param phi
 	 * @return
 	 */
-	public static double[] estimateObjectives(Corpus test, LDAParameters p, 
+	public static GeneralizationResult 
+		estimateObjectives(Corpus test, LDAParameters p, 
 			MirrorDescent rules, double[][] phi)
 	{
+		GeneralizationResult retval = new GeneralizationResult();
+		
 		// Init Gibbs inference with phi fixed
 		DiscreteSample testz = new DiscreteSample(test.N, p.T, test.W, test.D); 
 		CollapsedGibbs.fixedPhiSample(test, p, testz, true, phi);
@@ -291,18 +300,23 @@ public class FullEval {
 			CollapsedGibbs.fixedPhiSample(test, p, testz, false, phi);
 
 		// Do MC estimation samples
-		double[][] theta = new double[test.D][p.T];
-		double[] retval = new double[2];		
+		double avgLda = 0;
+		double avgLogic = 0;
+		double[][] theta = new double[test.D][p.T];		
 		for(int i = 0; i < MCSAMP; i++)
 		{
 			for(int j = 0; j < INTERVAL; j++)
 				CollapsedGibbs.fixedPhiSample(test, p, testz, false, phi);
 			theta = testz.mapTheta(p, theta);
-			
-			retval[0] += EvalLDA.ldaLoglike(testz.nw, testz.nd, phi, theta, 
+						
+			avgLda  += EvalLDA.ldaLoglike(testz.nw, testz.nd, phi, theta, 
 					p.beta, p.alpha) / MCSAMP;
-			retval[1] += rules.satWeight(testz.z) / MCSAMP;
+			avgLogic += rules.satWeight(testz.z) / MCSAMP;
 		}
+		
+		retval.setLdaobj(avgLda);
+		retval.setLogicobj(avgLogic);
+		retval.setFinalSample(testz.z);
 		return retval;
 	}
 }
