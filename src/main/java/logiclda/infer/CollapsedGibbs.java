@@ -78,7 +78,7 @@ public class CollapsedGibbs {
 		for(GroundableRule gr : grules)
 			gr.applyEvidence(c, p.T);
 		// Ground the Logic Rules
-		GroundRules gr = new GroundRules(grules, s.z, p.rng);
+		GroundRules gr = new GroundRules(grules, s.z, p.rng, p.T);
 		
 		// Do the samples
 		for(int si = 0; si < numsamp; si++)
@@ -112,7 +112,7 @@ public class CollapsedGibbs {
 		CollapsedGibbs.gibbsSample(c, p, s, true);
 						
 		// Ground the Logic Rules
-		GroundRules gr = new GroundRules(grules, s.z, p.rng);
+		GroundRules gr = new GroundRules(grules, s.z, p.rng, p.T);
 		
 		// Do the samples
 		for(int si = 0; si < numsamp; si++)

@@ -140,7 +140,7 @@ public class LDAMaxWalkSAT {
 		// Init data structures
 		//
 		GroundRules gr = 
-			new GroundRules(GroundRules.groundCast(lstRules), s.z, p.rng);
+			new GroundRules(GroundRules.groundCast(lstRules), s.z, p.rng, p.T);
 		
 		double[] randvsgreedy = new double[2];
 		randvsgreedy[0] = prand;

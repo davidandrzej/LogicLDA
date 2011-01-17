@@ -120,6 +120,10 @@ public class FullEval {
 			// For each fold
 			for(int ki = 0; ki < k; ki++)
 			{
+				// Adjust random seed and re-instantiate parameters
+				randseed++;
+				p = new LDAParameters(basefn, randseed);
+				
 				// Get train/test corpora
 				Corpus train = cf.getTrain(ki);
 				Corpus test = cf.getTest(ki);				

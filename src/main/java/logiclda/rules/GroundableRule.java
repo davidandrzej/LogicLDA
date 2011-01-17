@@ -23,6 +23,13 @@ public interface GroundableRule extends LogicRule
 	public void groundRule(int[] z);
 	
 	/**
+	 * Once rule is grounded, need to create large data struct of
+	 * all actual groundings (otherwise sort of 'cheating')
+	 * @param T
+	 */
+	public void groundPenalty(int T);
+	
+	/**
 	 * Evaluate the satisfied weight wrt a single idx in the grounding
 	 * @param grounding
 	 * @param z

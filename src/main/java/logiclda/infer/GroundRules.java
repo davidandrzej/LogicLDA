@@ -51,12 +51,19 @@ public class GroundRules
 	 * Each LogicRule has already been initialized with *.applyEvidence()
 	 * 
 	 */
-	public GroundRules(List<GroundableRule> lstRules, int[] z, Random rng)
+	public GroundRules(List<GroundableRule> lstRules, int[] z, Random rng, int T)
 	{
-		// Ground each rule
+		// Ground each rule 
 		this.rules = lstRules;
 		for(GroundableRule r : this.rules)
 			r.groundRule(z);
+		
+		// NEW PENALTY - ADD ADDITIONAL GROUNDINGS FOR 
+		// DIFFERENT GROUNDINGS OF TOPIC VARIABLE T
+		System.out.println(
+				String.format("Adding grounding penalty - factor of T=%d", T));
+		for(GroundableRule r : this.rules)
+			r.groundPenalty(T);
 		
 		// Get initial unsat counts for each ground rule
 		this.unsatCounts = new int[this.rules.size()];
