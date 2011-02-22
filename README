@@ -1,3 +1,10 @@
+EXPERIMENTAL PROCEDURES FOR IJCAI SUBMISSION
+-alchemyInfer directory code necessary to run before LogicLDA run
+-use bash scripts (runAll.sh and friends) to run cross-folds
+-use IJCAI-LOGIC-GRID scripts to analyze obj fcns, do t-tests, etc
+-some topics from qualitative analysis still on biostat network
+
+
 LogicLDA - Topic modeling with First-Order Logic (FOL) domain knowledge
 
 David Andrzejewski (andrzeje@cs.wisc.edu)
