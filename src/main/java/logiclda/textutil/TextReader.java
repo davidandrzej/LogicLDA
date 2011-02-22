@@ -295,13 +295,20 @@ public class TextReader {
 		// Print out vocab size after filtering at various thresholds
 		//			
 		int cutoff = 0;
-		for(int thresh = 0;  thresh < 50; thresh++)
+		int special = 200;
+		int specialcutoff = -1;		
+		for(int thresh = 0;  thresh < 250; thresh++)
 		{
 			while(counts.get(sortedWords[cutoff]) < thresh)
 				cutoff += 1;
+			if(thresh == special)
+				specialcutoff = cutoff;
 			out.write(String.format("%d words at thresh %d\n",
-					W-cutoff, thresh));
+					W-cutoff, thresh));			
 		}
+		for(int i = 0; i < specialcutoff; i++)
+			System.out.println(sortedWords[i]);
+		
 		out.close();
 	}
 

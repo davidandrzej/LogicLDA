@@ -1,9 +1,12 @@
 package logiclda.eval;
 
+import logiclda.infer.DiscreteSample;
+import logiclda.LDAParameters;
 import org.apache.commons.math.special.Gamma;
 
 public class EvalLDA 
 {
+		
 	/**
 	 * Calc uncollapsed LDA log-likelihood 
 	 * @param nw
@@ -29,6 +32,17 @@ public class EvalLDA
 		retval += logTheta(theta, nd);
 		
 		return retval;
+	}
+	
+	public static double ldaLoglike(DiscreteSample s, LDAParameters p)
+	{
+		double[][] phi = new double[p.T][p.W];
+		double[][] theta = new double[s.nd.length][p.T];
+		
+		phi = s.mapPhi(p, phi);
+		theta = s.mapTheta(p, theta);
+		
+		return ldaLoglike(s.nw, s.nd, phi, theta, p.beta, p.alpha);
 	}
 	
 	/**

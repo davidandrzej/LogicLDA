@@ -11,6 +11,7 @@
     <property name="source" value="1.6"/>
     <path id="LogicLDA.classpath">
         <pathelement location="bin"/>
+    	<pathelement location="/home/andrzejewski1/.m2/repository/org/apache/commons/commons-math/2.1/commons-math-2.1.jar"/>
         <pathelement location="lib/ant.jar"/>
         <pathelement location="lib/jakarta-ant-optional.jar"/>
         <pathelement location="lib/jwnl-1.3.3.jar"/>
@@ -109,16 +110,16 @@
             <classpath refid="LogicLDA.classpath"/>
         </java>
     </target>
-    <target name="LogicLDA-fold stewart-sentincl">
+    <target name="LogicLDA-evalstewart">
         <java classname="logiclda.eval.EvalLogic" failonerror="true" fork="yes">
             <jvmarg line="-Xmx4g"/>
             <arg line="/Users/andrzejewski1/code/eval-logic/stewart-sentincl/stewart 2000 100 100000 1945 4"/>
             <classpath refid="LogicLDA.classpath"/>
         </java>
     </target>
-    <target name="LogicLDA-macvspc">
+    <target name="LogicLDA">
         <java classname="logiclda.LogicLDA" failonerror="true" fork="yes">
-            <arg line="/Users/andrzejewski1/code/eval-logic/macvspc/macvspc 2000 1 1 3 194582"/>
+            <arg line="${BASEFN} ${NSAMP} ${NOUT} ${NIN} ${TOPN} ${RANDSEED}"/>
             <classpath refid="LogicLDA.classpath"/>
         </java>
     </target>
@@ -142,7 +143,7 @@
     </target>
     <target name="wordcount">
         <java classname="logiclda.textutil.TextReader" failonerror="true" fork="yes">
-            <arg line="wordcount /home/andrzejewski1/projects/nyt-full/nyt.doclist /home/andrzejewski1/data/news.stop /home/andrzejewski1/projects/nyt-full/nyt.counts"/>
+            <arg line="wordcount ${BASEFN}.doclist ${BASEFN}.stop ${BASEFN}.counts"/>
             <classpath refid="LogicLDA.classpath"/>
         </java>
     </target>

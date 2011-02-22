@@ -116,6 +116,15 @@ public class MaxWalkSAT {
 		randvsgreedy[0] = prand;
 		randvsgreedy[1] = 1 - prand;		
 				
+		// Best overall z-assignment found thus far
+		//
+		int[] bestz = new int[s.z.length];
+		System.arraycopy(s.z, 0, bestz, 0, s.z.length);
+		// We can measure the goodness of a current soln by 
+		// simply accumulating diffs
+		double bestdiff = 0;
+		double curdiff = 0;
+		
 		for(int i = 0; i < numiter; i++)
 		{
 			if(i % 100 == 0)
@@ -150,12 +159,24 @@ public class MaxWalkSAT {
 				newz = bestidxnewz[1];
 			}	
 			
-			// Take the step
+			// Take the step, record the obj fcn diff
+			curdiff -= gr.evalAssign(s.z, idx); 
 			s.reassign(c, idx, newz);
+			curdiff += gr.evalAssign(s.z, idx);
+			
+			// New champion?
+			if(curdiff > bestdiff)
+			{
+				bestdiff = curdiff;
+				System.arraycopy(s.z, 0, bestz, 0, s.z.length);
+			}
 			
 			// Update ground clause satisfaction
 			gr.updateUnsat(s.z, idx);
-		}				
+		}
+		
+		// Populate s with bestz and return
+		s.repopZ(c, bestz);
 		return s;
 	}
 	

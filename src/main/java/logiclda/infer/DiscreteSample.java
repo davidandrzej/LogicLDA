@@ -107,6 +107,19 @@ public class DiscreteSample implements Sample {
 		}
 	}
 	
+	/**
+	 * Repopulate z-sample, making necessary data struct changes
+	 * @param z
+	 */
+	public void repopZ(Corpus c, int[] newz)
+	{
+		assert(this.z.length == newz.length);
+		for(int i = 0; i < this.z.length; i++)
+			this.reassign(c, i, newz[i]);	
+	}
+	
+	
+	
 	/** 
 	 * Do bookkeeping assoc with reassigning z[idx] to newz
 	 * @param c

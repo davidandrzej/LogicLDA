@@ -15,6 +15,7 @@ import logiclda.MiscUtil;
 import logiclda.rules.LogicRule;
 import logiclda.rules.GroundableRule;
 import logiclda.rules.Grounding;
+import logiclda.eval.EvalLDA;
 import logiclda.infer.GroundRules;
 import logiclda.infer.DiscreteSample;
 
@@ -149,7 +150,14 @@ public class LDAMaxWalkSAT {
 		// Init phi/theta
 		double[][] phi = new double[p.T][p.W];
 		double[][] theta = new double[c.D][p.T];
-		
+
+		// Record best obj fcn found thus far
+		//		
+		int[] bestz = new int[s.z.length];
+		System.arraycopy(s.z, 0, bestz, 0, s.z.length);
+		MirrorDescent logicrules = new MirrorDescent(lstRules, p.rng);
+		double bestobj = EvalLDA.ldaLoglike(s, p) + logicrules.satWeight(s.z);
+				
 		for(int i = 0; i < numouter; i++)
 		{
 			System.out.println(String.format("LDA-MWS outer %d of %d",
@@ -199,8 +207,18 @@ public class LDAMaxWalkSAT {
 				// Update ground rule satisfaction
 				gr.updateUnsat(s.z, idx);
 			}
-		}
-		
+			
+			// New champion?						
+			double newobj = EvalLDA.ldaLoglike(s.nw, s.nd, phi, 
+					theta, p.beta, p.alpha) + logicrules.satWeight(s.z);
+			if(newobj > bestobj)
+			{
+				System.arraycopy(s.z, 0, bestz, 0, s.z.length);
+				bestobj = newobj;				
+			}
+		}		
+		// Use the best sample
+		s.repopZ(c, bestz);
 		return s;
 	}
 	

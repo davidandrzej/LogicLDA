@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 
+import logiclda.eval.EvalLDA;
+import logiclda.infer.MirrorDescent;
 import logiclda.rules.GroundableRule;
 import logiclda.rules.LogicRule;
 import logiclda.infer.GroundRules;
@@ -80,13 +82,33 @@ public class CollapsedGibbs {
 		// Ground the Logic Rules
 		GroundRules gr = new GroundRules(grules, s.z, p.rng, p.T);
 		
+		// Best overall z-assignment found thus far
+		//		
+		int[] bestz = new int[s.z.length];
+		System.arraycopy(s.z, 0, bestz, 0, s.z.length);
+		MirrorDescent logicrules = new MirrorDescent(rules, p.rng);
+		double bestobj = EvalLDA.ldaLoglike(s, p) + logicrules.satWeight(s.z);
+		
 		// Do the samples
 		for(int si = 0; si < numsamp; si++)
 		{
 			System.out.println(String.format("Sample %d of %d", si, numsamp));
 			CollapsedGibbs.groundGibbsSample(gr, c, p, s, false);
+			
+			// Do we have a new best sample?
+			if((si+1) % 500 == 0)
+			{
+				double newobj = EvalLDA.ldaLoglike(s, p) + logicrules.satWeight(s.z);
+				if(newobj > bestobj)
+				{
+					System.arraycopy(s.z, 0, bestz, 0, s.z.length);
+					bestobj = newobj;
+				}
+			}
 		}
 		
+		// Use the best sample
+		s.repopZ(c, bestz);
 		return s;
 	}
 	
@@ -112,7 +134,7 @@ public class CollapsedGibbs {
 		CollapsedGibbs.gibbsSample(c, p, s, true);
 						
 		// Ground the Logic Rules
-		GroundRules gr = new GroundRules(grules, s.z, p.rng, p.T);
+		GroundRules gr = new GroundRules(grules, s.z, p.rng, p.T);		
 		
 		// Do the samples
 		for(int si = 0; si < numsamp; si++)

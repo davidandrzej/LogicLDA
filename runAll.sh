@@ -3,7 +3,7 @@
 # "ALC" # "s1MLAB" "s2CLAB" "macvspc"
 
 DATASET="s1MLAB"
-for SCHEME in "ALC" # "LDA" "CGS" "MWS" "MIR" "MPL" "ALC"
+for SCHEME in "LDA" "CGS" "MWS" "MIR" "MPL" "ALC"
 do
     echo "running $SCHEME $DATASET"
     time bash runEval.sh $SCHEME $DATASET > $SCHEME-$DATASET.runtime
