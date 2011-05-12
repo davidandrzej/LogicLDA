@@ -49,8 +49,10 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>logiclda.eval.FullEval</mainClass>
-              <packageName>logiclda.eval</packageName>
+              <mainClass>logiclda.LogicLDA</mainClass>
+              <packageName>logiclda</packageName>
+              <!-- <mainClass>logiclda.eval.FullEval</mainClass> -->
+              <!-- <packageName>logiclda.eval</packageName> -->
             </manifest>
           </archive>
         </configuration>
