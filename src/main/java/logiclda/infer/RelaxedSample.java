@@ -12,7 +12,7 @@ import org.ujmp.core.enums.ValueType;
 
 import logiclda.Corpus;
 import logiclda.LDAParameters;
-import logiclda.textutil.FileUtil;
+import logiclda.FileUtil;
 
 public class RelaxedSample implements Sample
 {

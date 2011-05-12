@@ -20,7 +20,7 @@ import logiclda.infer.MirrorDescent;
 import logiclda.infer.RelaxedSample;
 import logiclda.rules.GroundableRule;
 import logiclda.rules.LogicRule;
-import logiclda.textutil.FileUtil;
+import logiclda.FileUtil;
 
 public class FullEval {
 

@@ -3,7 +3,7 @@ package logiclda.eval;
 import logiclda.Corpus;
 import logiclda.MiscUtil;
 import logiclda.SideInfoType;
-import logiclda.textutil.FileUtil;
+import logiclda.FileUtil;
 
 import java.io.File;
 import java.util.HashMap;

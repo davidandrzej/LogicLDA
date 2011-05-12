@@ -22,7 +22,7 @@ import logiclda.rules.SentExclRule;
 import logiclda.rules.SentInclRule;
 import logiclda.rules.CLRule;
 import logiclda.rules.MLRule;
-import logiclda.textutil.FileUtil;
+import logiclda.FileUtil;
 
 import org.ujmp.core.exceptions.MatrixException;
 

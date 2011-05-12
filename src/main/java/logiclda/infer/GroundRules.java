@@ -13,7 +13,7 @@ import logiclda.rules.Grounding;
 import logiclda.rules.LogicRule;
 import logiclda.rules.SeedRule;
 import logiclda.rules.IndependentRule;
-import logiclda.textutil.FileUtil;
+import logiclda.FileUtil;
 
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
