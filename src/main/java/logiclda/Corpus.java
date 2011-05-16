@@ -12,7 +12,6 @@ import org.ujmp.core.calculation.Calculation.Ret;
 import org.ujmp.core.enums.FileFormat;
 import org.ujmp.core.enums.ValueType;
 
-import logiclda.CountComparator;
 import logiclda.FileUtil;
 
 /**
