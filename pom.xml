@@ -26,20 +26,6 @@
         </configuration>
       </plugin>
 
-      <!-- <plugin> -->
-      <!--   <groupId>org.apache.maven.plugins</groupId> -->
-      <!--   <artifactId>maven-jar-plugin</artifactId> -->
-      <!--   <configuration> -->
-      <!--     <archive> -->
-      <!--       <manifest> -->
-      <!--         <mainClass>logiclda.eval.FullEval</mainClass> -->
-      <!--         <addClasspath>true</addClasspath> -->
-      <!--         <packageName>logiclda.eval</packageName> -->
-      <!--       </manifest> -->
-      <!--     </archive> -->
-      <!--   </configuration> -->
-      <!-- </plugin> -->
-
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
@@ -51,8 +37,6 @@
               <addClasspath>true</addClasspath>
               <mainClass>logiclda.LogicLDA</mainClass>
               <packageName>logiclda</packageName>
-              <!-- <mainClass>logiclda.eval.FullEval</mainClass> -->
-              <!-- <packageName>logiclda.eval</packageName> -->
             </manifest>
           </archive>
         </configuration>
