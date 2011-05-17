@@ -1,0 +1,59 @@
+HOW TO EXTEND LOGICLDA
+
+This code is designed to be extensible to new types of rules and side
+information.  All existing functionality (Cannot-Link rules, sentence
+side information, ...) has been implemented using the steps below and
+can be used as example code for creating your own rules or types of
+side information.
+
+
+
+CUSTOM RULES
+Custom rules can be created via the following steps:
+
+1) implement the logiclda.rules.LogicRule interface:
+
+   EXAMPLE
+   public class MyGreatRule implements LogicRule
+
+
+2) create an associated enum entry in logiclda.rules.RuleType 
+   
+   EXAMPLE
+   MYGREATRULE("MGR") will map 'mgr' in *.rules to MYGREATRULE
+
+
+3) add a hander for your new rule in logiclda.LogicLDA.readRules()
+
+   EXAMPLE    
+   case MYGREATRULE: 
+        rules.add(new MyGreatRule(sampWeight, stepWeight, ruleToks));
+        break;
+
+
+
+CUSTOM SIDE INFORMATION
+Custom side information can be added via the following steps:
+
+1) decide how to represent your side information along with how you
+   want to your custom rule to exploit this new information 
+   (eg, an int[], a HashMap, etc)
+
+2) create an associated enum entry in logiclda.SideInfoType
+   
+   EXAMPLE
+   ENTITYTAGS("entities") will map an *.entities file to ENTITYTAGS
+
+3) add a handler for your new side information logiclda.Corpus.getSideInfo()
+
+   EXAMPLE
+   case ENTITYTAGS:
+     int[] entitytags = ... // reading the *.entities file
+     sideInfo.put("entitytags", entitytags);
+     break;	
+
+4) your custom rule will now be able to access this side information
+   via the Corpus.sideInfo field
+
+   EXAMPLE
+   int[] entitytags = (int[]) mycorpus.sideInfo.get("entitytags");
