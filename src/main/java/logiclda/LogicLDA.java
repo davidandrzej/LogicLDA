@@ -18,9 +18,6 @@
 
 package logiclda;
 
-
-
-
 import java.util.*;
 import java.io.*;
 
