@@ -4,49 +4,76 @@ David Andrzejewski (andrzeje@cs.wisc.edu)
 Department of Computer Sciences
 University of Wisconsin-Madison, USA
 
-This code implements inference for the LogicLDA model.  LogicLDA
-extends Latent Dirichlet Allocation (LDA) by allowing the user to
+OVERVIEW
+
+This code implements inference for the LogicLDA model [1].  LogicLDA
+extends Latent Dirichlet Allocation (LDA) [2] by allowing the user to
 specify a weighted first-order logic (FOL) knowledge base (KB), as in
-Markov Logic Networks (MLN).  The resulting model can be interpreted
-as a Produce of Experts (PoE) consisting of standard LDA and MLN
-components.  The inferred topics will then be influenced by both
-document-word corpus statistics as well as the user-specified logical
-KB. This code performs MAP inference via a stochastic gradient descent
+Markov Logic Networks (MLN).  The inferred topics will then be
+influenced by both document-word corpus statistics as well as the
+user-specified logical KB. This code is implemented in Java and
+performs scalable MAP inference via a stochastic gradient descent
 scheme.
 
+BUILD
 
-CURRENT ISSUES 
--sentence *exclusion* runs are much slower - why?
+The LogicLDA Java project can be built with Maven:
 
-DATASET DIRECTORY FILES
+$ mvn package
+$ cp ./target/logiclda-0.0.1-SNAPSHOT-jar-with-dependencies.jar ./logiclda.jar
+
+
+USAGE
+
+Say that our dataset is named 'nyt' (see INPUT/OUTPUT FILES below).
+Then we run LogicLDA inference with:
+
+java -jar logiclda.jar nyt 500 100 10000 25 194582
+
+Which does
+500 iterations of LogicLDA collapsed Gibbs sampling to initialize
+100 outer / 10000 inner iterations of Mir SGD inference
+print out the Top 25 words for each topic to nyt.topics
+using 194582 as the random number seed
+
+An example dataset and bash script can be found in ./test
+
+
+INPUT/OUTPUT FILES
 
 The input and output files obey the a naming convention where all
 files consist of the name of the dataset plus a filetype-specific
 extesion.  For example, if we were processing a corpus of New York
 Times articles, we would supply input files nyt.docs, nyt.vocab, ...
-and LogicLDA would give us output files nyt.topics, nyt.topics, and so
-on.
+and LogicLDA would give us output files nyt.topics, nyt.sample, ...
 
 [input]
-        .init
+        .rules          FOL rules (see RULES for details)
+        .alpha          [T] alpha hyperparameter
+        .beta           [TxW] beta hyperparameter
+        .doclist        [D] document names
+        .vocab          [W] vocabulary (one word per line)
+        .words          [N] word indices for each corpus position  
+        .docs           [N] document indices for each corpus position
 
-        .alpha
-        .beta
-
-        .doclist
-        .docs
-        .vocab
-        .words
-        .sent
-
-        .rules
+        (optional)
+        .sent           [N] sentence indices for each corpus position 
+        .init           [N] initial z-sample state
 
 [output]
-        .sample 
-        .phi 
-        .theta
-        .topics
-        .logic
+        .sample         [N] latent topic indices for each corpus position
+        .phi            [TxW] topic-word probabilities P(w|z)
+        .theta          [DxT] document-topic probabilities P(z|d)
+        .topics         plaintext summary of learned topics
+        .logic          plaintext summary of logic rule satisfaction
+
+
+EXTENDING LOGICLDA
+
+This software is designed to allow the straightforward inclusion of
+custom rule types and sources of side information (see EXTENDING for
+details).
+
 
 LICENSE
 
@@ -55,5 +82,18 @@ General Public License version 3, or any later version of the GPL (see
 COPYING).
 
 
+REFERENCES
 
+[1] Andrzejewski, D., Zhu, X., Craven, M., and Recht, B. (2011).  A
+Framework for Incorporating General Domain Knowledge into Latent
+Dirichlet Allocation Using First-Order Logic. In Proceedings of the
+22nd International Joint Conference on Artificial Intelligence (IJCAI
+2011).
 
+[2] Blei, D. M., Ng, A. Y., and Jordan, M. I. (2003). Latent Dirichlet
+Allocation.  Journal of Machine Learning Research (JMLR) 3
+(Mar. 2003), 993-1022.
+
+[3] Domingos, P. and Lowd, D. (2009).  Markov Logic: An Interface
+Layer for Artificial Intelligence. Synthesis Lectures on Artificial
+Intelligence and Machine Learning, Morgan and Claypool Publishers.
