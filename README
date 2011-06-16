@@ -47,6 +47,18 @@ extesion.  For example, if we were processing a corpus of New York
 Times articles, we would supply input files nyt.docs, nyt.vocab, ...
 and LogicLDA would give us output files nyt.topics, nyt.sample, ...
 
+Note that *.words should be the integer indices of word tokens, not
+the tokens themselves.  For example, if *.vocab is 
+
+foo
+bar
+baz
+
+Then the string "foo foo baz bar foo" should be in *.words as: 0 0 2 1 0
+
+These kinds of representations can be built from plaintext with the
+textproc code (https://github.com/davidandrzej/textproc).
+
 [input]
         .rules          FOL rules (see RULES for details)
         .alpha          [T] alpha hyperparameter
