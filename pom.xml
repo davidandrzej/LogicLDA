@@ -57,12 +57,17 @@
   <repositories>
 
     <repository>
+      <id>central</id>
+      <url>http://central</url>
+    </repository>
+
+    <repository>
       <id>clojars.org</id>
       <url>http://clojars.org/repo</url>
     </repository>
 
     <repository>
-      <id>opennlp.sf.net</id>
+      <id>opennlp.sf.net</id>      
       <url>http://opennlp.sourceforge.net/maven2</url>
     </repository>
 
@@ -70,7 +75,7 @@
 
 
   <dependencies>
-
+    
     <dependency>
       <groupId>opennlp</groupId>
       <artifactId>opennlp-tools</artifactId>

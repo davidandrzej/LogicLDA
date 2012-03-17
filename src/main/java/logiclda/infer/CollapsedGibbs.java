@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 
-import logiclda.eval.EvalLDA;
+import logiclda.EvalLDA;
 import logiclda.infer.MirrorDescent;
 import logiclda.rules.GroundableRule;
 import logiclda.rules.LogicRule;

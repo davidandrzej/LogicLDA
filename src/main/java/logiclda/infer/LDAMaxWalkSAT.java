@@ -15,7 +15,7 @@ import logiclda.MiscUtil;
 import logiclda.rules.LogicRule;
 import logiclda.rules.GroundableRule;
 import logiclda.rules.Grounding;
-import logiclda.eval.EvalLDA;
+import logiclda.EvalLDA;
 import logiclda.infer.GroundRules;
 import logiclda.infer.DiscreteSample;
 
